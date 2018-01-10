@@ -1,0 +1,24 @@
+{
+  "name": "webpack-bugsnag-plugins",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "standard && tape test/build-reporter-plugin.test.js"
+  },
+  "author": "Bugsnag Inc.",
+  "license": "MIT",
+  "devDependencies": {
+    "standard": "^10.0.3",
+    "tape": "^4.8.0",
+    "webpack": "^3.10.0"
+  },
+  "dependencies": {
+    "bugsnag-build-reporter": "git+ssh://git@github.com/bugsnag/bugsnag-build-reporter.git"
+  },
+  "standard": {
+    "ignore": [
+      "test/fixtures/**/*"
+    ]
+  }
+}
