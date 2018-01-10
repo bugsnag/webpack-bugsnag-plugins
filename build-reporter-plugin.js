@@ -12,7 +12,11 @@ class BugsnagBuildReporterPlugin {
       if (stats.hasErrors()) return cb(null)
       reportBuild(this.build, this.options)
         .then(() => cb(null))
-        .catch((err) => cb(err))
+        .catch((/* err */) => {
+          // ignore err: a failure to notify Bugsnag shouldn't fail the build
+          // plus the detail will already have been logged to the console
+          cb(null)
+        })
     })
   }
 }
