@@ -1,8 +1,9 @@
 const reportBuild = require('bugsnag-build-reporter')
+const pkg = require('./package.json')
 
 class BugsnagBuildReporterPlugin {
   constructor (build, options) {
-    this.build = build
+    this.build = Object.assign({ buildTool: `${pkg.name}@${pkg.version}` }, build)
     this.options = Object.assign({ logLevel: 'warn' }, options)
   }
 
