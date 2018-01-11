@@ -1,7 +1,7 @@
 {
   "name": "webpack-bugsnag-plugins",
   "version": "1.0.0-3",
-  "description": "",
+  "description": "Webpack plugins for common Bugsnag actions",
   "main": "index.js",
   "scripts": {
     "test": "standard && tape test/build-reporter-plugin.test.js"
@@ -14,7 +14,7 @@
     "webpack": "^3.10.0"
   },
   "dependencies": {
-    "bugsnag-build-reporter": "^1.0.0-2"
+    "bugsnag-build-reporter": "^1.0.0-4"
   },
   "standard": {
     "ignore": [

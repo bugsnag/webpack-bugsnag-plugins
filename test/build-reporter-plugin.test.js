@@ -2,12 +2,11 @@ const test = require('tape')
 const Plugin = require('../build-reporter-plugin')
 const http = require('http')
 const exec = require('child_process').exec
-const pkg = require('../package.json')
 
 test('BugsnagBuildReporterPlugin', t => {
   const p = new Plugin()
   t.equal(p.options.logLevel, 'warn', 'default logLevel should be "warn"')
-  t.equal(p.build.buildTool, `webpack-bugsnag-plugins@${pkg.version}`, 'build.buildTool should be set')
+  t.equal(p.build.buildTool, 'webpack-bugsnag-plugins', 'build.buildTool should be set')
   t.end()
 })
 
@@ -22,6 +21,7 @@ test('it sends upon successful build', t => {
       try {
         j = JSON.parse(body)
       } catch (e) {
+        server.close()
         t.fail('failed to parse body as json')
       }
       t.ok(j, 'json body was received')
