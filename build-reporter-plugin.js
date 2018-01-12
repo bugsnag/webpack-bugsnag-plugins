@@ -1,3 +1,5 @@
+'use strict'
+
 const reportBuild = require('bugsnag-build-reporter')
 
 class BugsnagBuildReporterPlugin {

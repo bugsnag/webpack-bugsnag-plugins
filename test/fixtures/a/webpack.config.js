@@ -1,4 +1,4 @@
-const { BugsnagBuildReporterPlugin } = require('../../../')
+const BugsnagBuildReporterPlugin = require('../../../').BugsnagBuildReporterPlugin
 
 module.exports = {
   entry: './app.js',
