@@ -22,7 +22,9 @@
     "webpack": "^3.10.0"
   },
   "dependencies": {
-    "bugsnag-build-reporter": "^1.0.0"
+    "bugsnag-build-reporter": "^1.0.0",
+    "bugsnag-sourcemaps": "^1.0.2",
+    "run-parallel-limit": "^1.0.3"
   },
   "standard": {
     "ignore": [
