@@ -12,7 +12,7 @@ npm install --save-dev webpack-bugsnag-plugins
 
 ## Plugins
 
-### `BugsnagBuildReporterPlugin(build, opts): stream`
+### `new BugsnagBuildReporterPlugin(build, opts):`[`WebpackPlugin`](https://webpack.js.org/concepts/plugins/)
 
 ```js
 const { BugsnagBuildReporterPlugin } = require('webpack-bugsnag-plugins')
@@ -61,7 +61,9 @@ module.exports = {
 }
 ```
 
-### `BugsnagSourceMapUploaderPlugin(opts): stream`
+---
+
+### `new BugsnagSourceMapUploaderPlugin(opts):`[`WebpackPlugin`](https://webpack.js.org/concepts/plugins/)
 
 ```js
 const { BugsnagSourceMapUploaderPlugin } = require('webpack-bugsnag-plugins')
@@ -71,7 +73,7 @@ Upload your application's sourcemap(s) to Bugsnag. When Webpack is done producin
 
 - `opts` provide options to the sourcemap uploader
   - `apiKey: string` your Bugsnag API key __[required]__
-  - `publicPath: string` the path to your bundled assets (as the browser will see them)
+  - `publicPath: string` the path to your bundled assets (as the browser will see them). This option must either be provided here, or as [`output.publicPath`](https://webpack.js.org/configuration/output/#output-publicpath) in your Webpack config.
   - `appVersion: string` the version of the application you are building
   - `overwrite: boolean` whether you want to overwrite previously uploaded sourcemaps
   - `endpoint: string` post the build payload to a URL other than the default (`https://upload.bugsnag.com`)
@@ -85,7 +87,8 @@ module.exports = {
   entry: './app.js',
   output: {
     path: __dirname,
-    filename: './bundle.js'
+    filename: './bundle.js',
+    publicPath: 'https://your-app.xyz/assets/'
   },
   plugins: [].concat(
     // It's a good idea to only run this plugin when you're building a bundle
@@ -94,7 +97,7 @@ module.exports = {
       ? new BugsnagSourceMapUploaderPlugin({
           apiKey: 'YOUR_API_KEY',
           appVersion: '1.2.3'
-        }, { /* opts */ })
+        })
       : []
   )
 }

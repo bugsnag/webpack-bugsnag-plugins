@@ -1,7 +1,7 @@
 'use strict'
 
 const upload = require('bugsnag-sourcemaps').upload
-const join = require('path').join
+const URL = require('url').URL
 const parallel = require('run-parallel-limit')
 
 const LOG_PREFIX = `[BugsnagSourceMapUploaderPlugin]`
@@ -51,7 +51,11 @@ class BugsnagSourceMapUploaderPlugin {
         return {
           source: compilation.assets[source].existsAt,
           map: compilation.assets[map].existsAt,
-          url: join(publicPath, source)
+          url: new URL(
+            source,
+            // ensure publicPath has a trailing slash
+            publicPath.replace(/[^/]$/, '$&/')
+          ).toString()
         }
       }
 
