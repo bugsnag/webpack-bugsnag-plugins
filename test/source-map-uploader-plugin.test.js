@@ -66,6 +66,8 @@ test('it sends upon successful build (example project #1)', t => {
   exec(`${__dirname}/../node_modules/.bin/webpack`, {
     env: Object.assign({}, process.env, { PORT: server.address().port }),
     cwd: `${__dirname}/fixtures/d`
+  }, (err, stdout, stderr) => {
+    if (err) end(err)
   })
 })
 
@@ -112,5 +114,7 @@ test('it sends upon successful build (example project #2)', t => {
   exec(`${__dirname}/../node_modules/.bin/webpack`, {
     env: Object.assign({}, process.env, { PORT: server.address().port }),
     cwd: `${__dirname}/fixtures/c`
+  }, err => {
+    if (err) end(err)
   })
 })
