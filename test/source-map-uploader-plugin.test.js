@@ -38,7 +38,7 @@ test('it sends upon successful build (example project #1)', t => {
         return end(err)
       }
       t.equal(data.fields.apiKey, 'YOUR_API_KEY', 'body should contain api key')
-      t.equal(data.fields.minifiedUrl, 'https://foobar.com/js/main.js?68986425eee4dc839345', 'body should contain minified url')
+      t.ok(/^https:\/\/foobar.com\/js\/main\.js\?[\w\d]+$/.test(data.fields.minifiedUrl), 'body should contain minified url')
       t.equal(data.parts.length, 2, 'body should contain 2 uploads')
       let partsRead = 0
       data.parts.forEach(part => {
