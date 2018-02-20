@@ -17,6 +17,13 @@ class BugsnagSourceMapUploaderPlugin {
     this.appVersion = options.appVersion
     this.overwrite = options.overwrite
     this.endpoint = options.endpoint
+    this.validate()
+  }
+
+  validate () {
+    if (typeof this.apiKey !== 'string' || this.apiKey.length < 1) {
+      throw new Error(`${LOG_PREFIX} "apiKey" is required`)
+    }
   }
 
   apply (compiler) {

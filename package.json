@@ -8,7 +8,7 @@
   ],
   "main": "index.js",
   "scripts": {
-    "test": "standard && tape test/build-reporter-plugin.test.js"
+    "test": "standard && tape test/**.test.js | tap-spec"
   },
   "repository": {
     "type": "git",
@@ -17,7 +17,10 @@
   "author": "Bugsnag Inc.",
   "license": "MIT",
   "devDependencies": {
+    "concat-stream": "^1.6.0",
+    "parse-formdata": "^1.0.2",
     "standard": "^10.0.3",
+    "tap-spec": "^4.1.1",
     "tape": "^4.8.0",
     "webpack": "^3.10.0"
   },
