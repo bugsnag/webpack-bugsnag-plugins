@@ -85,6 +85,7 @@ const { BugsnagSourceMapUploaderPlugin } = require('webpack-bugsnag-plugins')
 
 module.exports = {
   entry: './app.js',
+  devtool: 'source-map',
   output: {
     path: __dirname,
     filename: './bundle.js',
