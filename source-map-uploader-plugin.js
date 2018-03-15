@@ -41,11 +41,11 @@ class BugsnagSourceMapUploaderPlugin {
         const map = chunk.files.find(file => /.+\.map(\?.*)?$/.test(file))
 
         // find a corresponding source file in the chunk
-        const source = chunk.files.find(file => file === map.replace('.map', ''))
+        const source = map ? chunk.files.find(file => file === map.replace('.map', '')) : null
 
         if (!source || !map) {
-          console.warn(`${LOG_PREFIX} no source/map pair found for chunk "${chunk.name}"`)
-          return cb()
+          console.warn(`${LOG_PREFIX} no source/map pair found for chunk "${chunk.id}"`)
+          return null
         }
 
         return {
@@ -59,7 +59,7 @@ class BugsnagSourceMapUploaderPlugin {
         }
       }
 
-      const sourceMaps = stats.chunks.map(chunkToSourceMapDescriptor)
+      const sourceMaps = stats.chunks.map(chunkToSourceMapDescriptor).filter(Boolean)
       parallel(sourceMaps.map(sm => cb => {
         console.log(`${LOG_PREFIX} uploading sourcemap for "${sm.url}"`)
         upload(this.getUploadOpts(sm), cb)
