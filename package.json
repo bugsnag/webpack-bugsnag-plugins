@@ -21,8 +21,7 @@
     "parse-formdata": "^1.0.2",
     "standard": "^10.0.3",
     "tap-spec": "^4.1.1",
-    "tape": "^4.8.0",
-    "webpack": "^3.10.0"
+    "tape": "^4.8.0"
   },
   "dependencies": {
     "bugsnag-build-reporter": "^1.0.0",

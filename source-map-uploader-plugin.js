@@ -27,7 +27,7 @@ class BugsnagSourceMapUploaderPlugin {
   }
 
   apply (compiler) {
-    compiler.plugin('after-emit', (compilation, cb) => {
+    const plugin = (compilation, cb) => {
       const stats = compilation.getStats().toJson()
       const publicPath = this.publicPath || stats.publicPath
 
@@ -64,7 +64,15 @@ class BugsnagSourceMapUploaderPlugin {
         console.log(`${LOG_PREFIX} uploading sourcemap for "${sm.url}"`)
         upload(this.getUploadOpts(sm), cb)
       }), 10, cb)
-    })
+    }
+
+    if (compiler.hooks) {
+      // webpack v4
+      compiler.hooks.afterEmit.tapAsync('BugsnagSourceMapUploaderPlugin', plugin)
+    } else {
+      // webpack v3
+      compiler.plugin('after-emit', plugin)
+    }
   }
 
   getUploadOpts (sm) {
