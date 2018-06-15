@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.0 (2018-06-15)
+
+This version uses feature detection to decide which Webpack APIs to use, making this change backwards compatible with Webpack v3.
+
 ## 1.1.1 (2018-03-15)
 
 ### Fixed
