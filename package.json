@@ -28,6 +28,9 @@
     "bugsnag-sourcemaps": "^1.0.3",
     "run-parallel-limit": "^1.0.3"
   },
+  "peerDependencies": {
+    "webpack": ">=3"
+  },
   "standard": {
     "ignore": [
       "test/fixtures/**/*"
