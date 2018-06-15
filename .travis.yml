@@ -3,3 +3,14 @@ node_js:
   - "4"
   - "6"
   - "8"
+
+env:
+  - WEBPACK_VERSION=3
+  - WEBPACK_VERSION=4
+
+matrix:
+  exclude:
+  - node_js: "4"
+    env: WEBPACK_VERSION=4
+
+before_script: bin/ci-install.sh

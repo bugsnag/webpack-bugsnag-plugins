@@ -9,7 +9,7 @@ class BugsnagBuildReporterPlugin {
   }
 
   apply (compiler) {
-    compiler.plugin('after-emit', (compilation, cb) => {
+    const plugin = (compilation, cb) => {
       const stats = compilation.getStats()
       if (stats.hasErrors()) return cb(null)
       reportBuild(this.build, this.options)
@@ -19,7 +19,14 @@ class BugsnagBuildReporterPlugin {
           // plus the detail will already have been logged to the console
           cb(null)
         })
-    })
+    }
+    if (compiler.hooks) {
+      // webpack v4
+      compiler.hooks.afterEmit.tapAsync('BugsnagBuildReporterPlugin', plugin)
+    } else {
+      // webpack v3
+      compiler.plugin('after-emit', plugin)
+    }
   }
 }
 
