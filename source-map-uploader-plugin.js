@@ -54,7 +54,8 @@ class BugsnagSourceMapUploaderPlugin {
           url: resolve(
             // ensure publicPath has a trailing slash
             publicPath.replace(/[^/]$/, '$&/'),
-            source
+            // ensure source doesn't have a leading slash
+            source.replace(/^\//, '')
           ).toString()
         }
       }
