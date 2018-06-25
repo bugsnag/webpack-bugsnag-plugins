@@ -54,7 +54,10 @@ class BugsnagSourceMapUploaderPlugin {
           url: resolve(
             // ensure publicPath has a trailing slash
             publicPath.replace(/[^/]$/, '$&/'),
-            source
+            // ensure source doesn't have a leading slash (sometimes it does, e.g.
+            // in laravel-mix, but this throws off the url resolve() call) see issue
+            // for more detail: https://github.com/bugsnag/webpack-bugsnag-plugins/issues/11
+            source.replace(/^\//, '')
           ).toString()
         }
       }
