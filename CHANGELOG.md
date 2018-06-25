@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.1 (2018-06-25)
+
+### Fixed
+- Tolerate leading slashes in chunk names (supports use with laravel-mix) (#12)
+
 ## 1.2.0 (2018-06-15)
 
 This version uses feature detection to decide which Webpack APIs to use, making this change backwards compatible with Webpack v3.
