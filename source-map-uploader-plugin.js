@@ -36,33 +36,35 @@ class BugsnagSourceMapUploaderPlugin {
         return cb()
       }
 
-      const chunkToSourceMapDescriptor = chunk => {
-        // find a .map file in this chunk
-        const map = chunk.files.find(file => /.+\.map(\?.*)?$/.test(file))
+      const chunkToSourceMapDescriptors = chunk => {
+        // find .map files in this chunk
+        const maps = chunk.files.filter(file => /.+\.map(\?.*)?$/.test(file))
 
-        // find a corresponding source file in the chunk
-        const source = map ? chunk.files.find(file => file === map.replace('.map', '')) : null
+        return maps.map(map => {
+          // for each *.map file, find a corresponding source file in the chunk
+          const source = map ? chunk.files.find(file => file === map.replace('.map', '')) : null
 
-        if (!source || !map) {
-          console.warn(`${LOG_PREFIX} no source/map pair found for chunk "${chunk.id}"`)
-          return null
-        }
+          if (!source || !map) {
+            console.warn(`${LOG_PREFIX} no source/map pair found for chunk "${chunk.id}"`)
+            return null
+          }
 
-        return {
-          source: compilation.assets[source].existsAt,
-          map: compilation.assets[map].existsAt,
-          url: resolve(
-            // ensure publicPath has a trailing slash
-            publicPath.replace(/[^/]$/, '$&/'),
-            // ensure source doesn't have a leading slash (sometimes it does, e.g.
-            // in laravel-mix, but this throws off the url resolve() call) see issue
-            // for more detail: https://github.com/bugsnag/webpack-bugsnag-plugins/issues/11
-            source.replace(/^\//, '')
-          ).toString()
-        }
+          return {
+            source: compilation.assets[source].existsAt,
+            map: compilation.assets[map].existsAt,
+            url: resolve(
+              // ensure publicPath has a trailing slash
+              publicPath.replace(/[^/]$/, '$&/'),
+              // ensure source doesn't have a leading slash (sometimes it does, e.g.
+              // in laravel-mix, but this throws off the url resolve() call) see issue
+              // for more detail: https://github.com/bugsnag/webpack-bugsnag-plugins/issues/11
+              source.replace(/^\//, '')
+            ).toString()
+          }
+        }).filter(Boolean)
       }
 
-      const sourceMaps = stats.chunks.map(chunkToSourceMapDescriptor).filter(Boolean)
+      const sourceMaps = stats.chunks.map(chunkToSourceMapDescriptors).reduce((accum, ds) => accum.concat(ds), [])
       parallel(sourceMaps.map(sm => cb => {
         console.log(`${LOG_PREFIX} uploading sourcemap for "${sm.url}"`)
         upload(this.getUploadOpts(sm), cb)
