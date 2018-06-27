@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.2 (2018-06-27)
+
+### Added
+- Support multiple maps per chunk (#14)
+
 ## 1.2.1 (2018-06-25)
 
 ### Fixed
