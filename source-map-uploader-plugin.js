@@ -3,6 +3,7 @@
 const upload = require('bugsnag-sourcemaps').upload
 const resolve = require('url').resolve
 const parallel = require('run-parallel-limit')
+const path = require('path')
 
 const LOG_PREFIX = `[BugsnagSourceMapUploaderPlugin]`
 const PUBLIC_PATH_ERR =
@@ -42,7 +43,7 @@ class BugsnagSourceMapUploaderPlugin {
 
         return maps.map(map => {
           // for each *.map file, find a corresponding source file in the chunk
-          const source = map ? chunk.files.find(file => file === map.replace('.map', '')) : null
+          const source = map ? chunk.files.find(file => path.basename(file) === path.basename(map).replace('.map', '')) : null
 
           if (!source || !map) {
             console.warn(`${LOG_PREFIX} no source/map pair found for chunk "${chunk.id}"`)
