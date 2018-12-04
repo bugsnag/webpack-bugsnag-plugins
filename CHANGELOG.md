@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.3 (2018-12-04)
+
+### Added
+- Retry on failed requests (via dependency bump) (#21)
+
 ## 1.2.2 (2018-06-27)
 
 ### Added
