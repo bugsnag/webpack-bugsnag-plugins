@@ -51,6 +51,7 @@ class BugsnagSourceMapUploaderPlugin {
 
           if (!compilation.assets[source]) {
             console.debug(`${LOG_PREFIX} source asset not found in compilation output "${source}"`)
+            return null
           }
 
           if (!compilation.assets[map]) {
