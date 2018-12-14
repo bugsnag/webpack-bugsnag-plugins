@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.4 (2018-12-14)
+
+### Fixed
+- Handle missing asset when source map is not written to disk (#23, fixes #18)
+
 ## 1.2.3 (2018-12-04)
 
 ### Added
