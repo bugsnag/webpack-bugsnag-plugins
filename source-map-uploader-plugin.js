@@ -42,10 +42,20 @@ class BugsnagSourceMapUploaderPlugin {
 
         return maps.map(map => {
           // for each *.map file, find a corresponding source file in the chunk
-          const source = map ? chunk.files.find(file => file === map.replace('.map', '')) : null
+          const source = chunk.files.find(file => file === map.replace('.map', ''))
 
-          if (!source || !map) {
-            console.warn(`${LOG_PREFIX} no source/map pair found for chunk "${chunk.id}"`)
+          if (!source) {
+            console.warn(`${LOG_PREFIX} no corresponding source found for "${map}" in chunk "${chunk.id}"`)
+            return null
+          }
+
+          if (!compilation.assets[source]) {
+            console.debug(`${LOG_PREFIX} source asset not found in compilation output "${source}"`)
+            return null
+          }
+
+          if (!compilation.assets[map]) {
+            console.debug(`${LOG_PREFIX} source map not found in compilation output "${map}"`)
             return null
           }
 
