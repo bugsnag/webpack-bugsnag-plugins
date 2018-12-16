@@ -3,6 +3,7 @@
 const upload = require('bugsnag-sourcemaps').upload
 const resolve = require('url').resolve
 const parallel = require('run-parallel-limit')
+const fs = require('fs')
 
 const LOG_PREFIX = `[BugsnagSourceMapUploaderPlugin]`
 const PUBLIC_PATH_ERR =
@@ -17,6 +18,7 @@ class BugsnagSourceMapUploaderPlugin {
     this.appVersion = options.appVersion
     this.overwrite = options.overwrite
     this.endpoint = options.endpoint
+    this.deleteSourceMaps = options.deleteSourceMaps ? options.deleteSourceMaps : false
     this.validate()
   }
 
@@ -78,7 +80,20 @@ class BugsnagSourceMapUploaderPlugin {
       parallel(sourceMaps.map(sm => cb => {
         console.log(`${LOG_PREFIX} uploading sourcemap for "${sm.url}"`)
         upload(this.getUploadOpts(sm), cb)
-      }), 10, cb)
+      }), 10, () => {
+        if (this.deleteSourceMaps) {
+          sourceMaps.forEach(sm => {
+            fs.unlink(sm.map, err => {
+              if (err) {
+                throw new Error(`${LOG_PREFIX} error deleting sourcemap for "${sm.url}"`)
+              } else {
+                console.log(`${LOG_PREFIX} deleted sourcemap for "${sm.url}"`)
+              }
+            })
+          })
+        }
+        cb()
+      })
     }
 
     if (compiler.hooks) {
