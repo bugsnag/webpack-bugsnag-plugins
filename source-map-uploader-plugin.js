@@ -64,7 +64,7 @@ class BugsnagSourceMapUploaderPlugin {
           // only include this file if its extension is in the list of desirable ones.
           // we use the extension from the file on disk because the name in the chunk
           // can have suffixes such as: main.js?23764
-          if (!this.extensions.includes(extname(compilation.assets[source].existsAt))) {
+          if (this.extensions.indexOf(extname(compilation.assets[source].existsAt)) === -1) {
             return null
           }
 
