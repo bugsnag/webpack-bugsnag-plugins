@@ -77,6 +77,7 @@ Upload your application's sourcemap(s) to Bugsnag. When Webpack is done producin
   - `appVersion: string` the version of the application you are building
   - `overwrite: boolean` whether you want to overwrite previously uploaded sourcemaps
   - `endpoint: string` post the build payload to a URL other than the default (`https://upload.bugsnag.com`)
+  - `extensions: string[]` a list of bundle file extensions to upload source maps for (default `[ '.js' ]`)
 
 #### Usage
 
