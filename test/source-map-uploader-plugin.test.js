@@ -206,7 +206,7 @@ if (process.env.WEBPACK_VERSION !== '3') {
     })
     server.listen()
     exec(`${__dirname}/../node_modules/.bin/webpack`, {
-      env: Object.assign({}, process.env, { PORT: server.address().port, EXTENSIONS: '.js,.css' }),
+      env: Object.assign({}, process.env, { PORT: server.address().port, IGNORED_EXTENSIONS: '.php,.exe' }),
       cwd: `${__dirname}/fixtures/e`
     }, (err) => {
       if (err) end(err)

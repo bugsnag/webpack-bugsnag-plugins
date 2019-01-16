@@ -18,7 +18,7 @@ class BugsnagSourceMapUploaderPlugin {
     this.appVersion = options.appVersion
     this.overwrite = options.overwrite
     this.endpoint = options.endpoint
-    this.extensions = options.extensions || [ '.js' ]
+    this.ignoredBundleExtensions = options.ignoredBundleExtensions || [ '.css' ]
     this.validate()
   }
 
@@ -61,10 +61,10 @@ class BugsnagSourceMapUploaderPlugin {
             return null
           }
 
-          // only include this file if its extension is in the list of desirable ones.
+          // only include this file if its extension is not in the ignore list
           // we use the extension from the file on disk because the name in the chunk
           // can have suffixes such as: main.js?23764
-          if (this.extensions.indexOf(extname(compilation.assets[source].existsAt)) === -1) {
+          if (this.ignoredBundleExtensions.indexOf(extname(compilation.assets[source].existsAt)) !== -1) {
             return null
           }
 

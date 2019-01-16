@@ -9,7 +9,7 @@ module.exports = {
     new BugsnagSourceMapUploaderPlugin({
       apiKey: 'YOUR_API_KEY',
       endpoint: `http://localhost:${process.env.PORT}`,
-      extensions: process.env.EXTENSIONS ? process.env.EXTENSIONS.split(',') : undefined
+      ignoredBundleExtensions: process.env.IGNORED_EXTENSIONS ? process.env.IGNORED_EXTENSIONS.split(',') : undefined
     })
   ],
   output: {
