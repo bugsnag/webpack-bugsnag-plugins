@@ -120,6 +120,54 @@ test('it sends upon successful build (example project #2)', t => {
 })
 
 if (process.env.WEBPACK_VERSION !== '3') {
+  test('it’s able to locate the files when source maps are written to a different directory', t => {
+    const end = err => {
+      server.close()
+      if (err) return t.fail(err.message)
+      t.end()
+    }
+
+    t.plan(7)
+    const server = http.createServer((req, res) => {
+      parseFormdata(req, function (err, data) {
+        if (err) {
+          res.end('ERR')
+          return end(err)
+        }
+        t.equal(data.fields.apiKey, 'YOUR_API_KEY', 'body should contain api key')
+        t.equal(data.fields.minifiedUrl, '*/dist/main.js', 'body should contain minified url')
+        t.equal(data.parts.length, 2, 'body should contain 2 uploads')
+        let partsRead = 0
+        data.parts.forEach(part => {
+          part.stream.pipe(concat(data => {
+            partsRead++
+            if (part.name === 'sourceMap') {
+              t.equal(part.mimetype, 'application/json')
+              try {
+                t.ok(JSON.parse(data), 'sourceMap should be valid json')
+              } catch (e) {
+                end(e)
+              }
+            }
+            if (part.name === 'minifiedFile') {
+              t.equal(part.mimetype, 'application/javascript')
+              t.ok(data.length, 'js bundle should have length')
+            }
+            if (partsRead === 2) end()
+          }))
+        })
+        res.end('OK')
+      })
+    })
+    server.listen()
+    exec(`${__dirname}/../node_modules/.bin/webpack`, {
+      env: Object.assign({}, process.env, { PORT: server.address().port }),
+      cwd: `${__dirname}/fixtures/f`
+    }, err => {
+      if (err) end(err)
+    })
+  })
+
   test('it works when plugins cause a chunk to have multiple source maps', t => {
     t.plan(7)
     const requests = []
