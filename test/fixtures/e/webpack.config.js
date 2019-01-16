@@ -8,7 +8,8 @@ module.exports = {
     new MiniCssExtractPlugin(),
     new BugsnagSourceMapUploaderPlugin({
       apiKey: 'YOUR_API_KEY',
-      endpoint: `http://localhost:${process.env.PORT}`
+      endpoint: `http://localhost:${process.env.PORT}`,
+      ignoredBundleExtensions: process.env.IGNORED_EXTENSIONS ? process.env.IGNORED_EXTENSIONS.split(',') : undefined
     })
   ],
   output: {

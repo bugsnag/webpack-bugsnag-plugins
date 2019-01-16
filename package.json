@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "bugsnag-build-reporter": "^1.0.1",
-    "bugsnag-sourcemaps": "^1.0.5",
+    "bugsnag-sourcemaps": "^1.0.7",
     "run-parallel-limit": "^1.0.3"
   },
   "peerDependencies": {

@@ -3,6 +3,7 @@
 const upload = require('bugsnag-sourcemaps').upload
 const resolve = require('url').resolve
 const parallel = require('run-parallel-limit')
+const extname = require('path').extname
 
 const LOG_PREFIX = `[BugsnagSourceMapUploaderPlugin]`
 const PUBLIC_PATH_ERR =
@@ -17,6 +18,7 @@ class BugsnagSourceMapUploaderPlugin {
     this.appVersion = options.appVersion
     this.overwrite = options.overwrite
     this.endpoint = options.endpoint
+    this.ignoredBundleExtensions = options.ignoredBundleExtensions || [ '.css' ]
     this.validate()
   }
 
@@ -56,6 +58,13 @@ class BugsnagSourceMapUploaderPlugin {
 
           if (!compilation.assets[map]) {
             console.debug(`${LOG_PREFIX} source map not found in compilation output "${map}"`)
+            return null
+          }
+
+          // only include this file if its extension is not in the ignore list
+          // we use the extension from the file on disk because the name in the chunk
+          // can have suffixes such as: main.js?23764
+          if (this.ignoredBundleExtensions.indexOf(extname(compilation.assets[source].existsAt)) !== -1) {
             return null
           }
 

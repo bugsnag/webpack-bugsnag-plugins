@@ -166,10 +166,55 @@ if (process.env.WEBPACK_VERSION !== '3') {
     }, err => {
       if (err) end(err)
     })
+
+    test('it ignores source maps for css files by default', t => {
+      t.plan(7)
+      t.plan(3)
+      const requests = []
+      const end = err => {
+        clearTimeout(timeout)
+        server.close()
+        if (err) return t.fail(err.message)
+        t.end()
+      }
+
+      // prevent test hanging forever
+      const timeout = setTimeout(end, 10000)
+
+      const done = () => {
+        t.equal(requests[0].minifiedUrl, '*/dist/main.js')
+        t.equal(requests[0].parts[0].filename, 'main.js.map')
+        t.equal(requests[0].parts[1].filename, 'main.js')
+        end()
+      }
+
+      const server = http.createServer((req, res) => {
+        parseFormdata(req, function (err, data) {
+          if (err) {
+            res.end('ERR')
+            return end(err)
+          }
+          requests.push({
+            apiKey: data.fields.apiKey,
+            minifiedUrl: data.fields.minifiedUrl,
+            parts: data.parts.map(p => ({ name: p.name, filename: p.filename }))
+          })
+          res.end('OK')
+          done()
+        })
+      })
+      server.listen()
+      exec(`${__dirname}/../node_modules/.bin/webpack`, {
+        env: Object.assign({}, process.env, { PORT: server.address().port }),
+        cwd: `${__dirname}/fixtures/e`
+      }, (err) => {
+        if (err) end(err)
+      })
+    })
   })
 
-  test('it works when plugins cause a chunk to have multiple source maps', t => {
-    t.plan(7)
+  test('it uploads css map files if you really want', t => {
+    t.plan(6)
     const requests = []
     const end = err => {
       clearTimeout(timeout)
@@ -182,12 +227,11 @@ if (process.env.WEBPACK_VERSION !== '3') {
     const timeout = setTimeout(end, 10000)
 
     const done = () => {
-      t.equal(requests.length, 2)
       requests.sort((a, b) => a.minifiedUrl < b.minifiedUrl ? -1 : 1)
       t.equal(requests[0].minifiedUrl, '*/dist/main.css')
-      t.equal(requests[1].minifiedUrl, '*/dist/main.js')
       t.equal(requests[0].parts[0].filename, 'main.css.map')
       t.equal(requests[0].parts[1].filename, 'main.css')
+      t.equal(requests[1].minifiedUrl, '*/dist/main.js')
       t.equal(requests[1].parts[0].filename, 'main.js.map')
       t.equal(requests[1].parts[1].filename, 'main.js')
       end()
@@ -205,12 +249,13 @@ if (process.env.WEBPACK_VERSION !== '3') {
           parts: data.parts.map(p => ({ name: p.name, filename: p.filename }))
         })
         res.end('OK')
-        if (requests.length === 2) done()
+        if (requests.length < 2) return
+        done()
       })
     })
     server.listen()
     exec(`${__dirname}/../node_modules/.bin/webpack`, {
-      env: Object.assign({}, process.env, { PORT: server.address().port }),
+      env: Object.assign({}, process.env, { PORT: server.address().port, IGNORED_EXTENSIONS: '.php,.exe' }),
       cwd: `${__dirname}/fixtures/e`
     }, (err) => {
       if (err) end(err)
