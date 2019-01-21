@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.0 (2019-01-21)
+
+### Added
+- Add a list of ignored bundle exceptions (defaults to `[ '.css' ]`, preventing CSS bundles and source maps from unnecessarily being uploaded) (#26, fixes #24)
+
+### Changed
+- Improve bundle source file lookup (when bundles are output to a different directory than their source maps) (#27, fixes #20)
+
 ## 1.2.4 (2018-12-14)
 
 ### Fixed
