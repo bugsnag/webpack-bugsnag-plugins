@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.0 (2019-03-13)
+
+### Changed
+- Switch to manually calculating full paths on disk, preparing for the removal of `existsAt` in Webpack v5. This fixes a bug when `output.futureEmitAssets` is enabled in Webpack v4.29 (#29, fixes #28)
+
 ## 1.3.0 (2019-01-21)
 
 ### Added
