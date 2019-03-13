@@ -30,8 +30,10 @@ class BugsnagSourceMapUploaderPlugin {
 
   apply (compiler) {
     const plugin = (compilation, cb) => {
+      const compiler = compilation.compiler
       const stats = compilation.getStats().toJson()
       const publicPath = this.publicPath || stats.publicPath
+      const outputPath = compilation.getPath(compiler.outputPath)
 
       if (!publicPath) {
         console.warn(`${LOG_PREFIX} ${PUBLIC_PATH_ERR}`)
@@ -61,16 +63,17 @@ class BugsnagSourceMapUploaderPlugin {
             return null
           }
 
+          const outputChunkLocation = stripQuery(compiler.outputFileSystem.join(outputPath, source))
+          const outputSourceMapLocation = stripQuery(compiler.outputFileSystem.join(outputPath, map))
+
           // only include this file if its extension is not in the ignore list
-          // we use the extension from the file on disk because the name in the chunk
-          // can have suffixes such as: main.js?23764
-          if (this.ignoredBundleExtensions.indexOf(extname(compilation.assets[source].existsAt)) !== -1) {
+          if (this.ignoredBundleExtensions.indexOf(extname(outputChunkLocation)) !== -1) {
             return null
           }
 
           return {
-            source: compilation.assets[source].existsAt,
-            map: compilation.assets[map].existsAt,
+            source: outputChunkLocation,
+            map: outputSourceMapLocation,
             url: resolve(
               // ensure publicPath has a trailing slash
               publicPath.replace(/[^/]$/, '$&/'),
@@ -114,3 +117,10 @@ class BugsnagSourceMapUploaderPlugin {
 }
 
 module.exports = BugsnagSourceMapUploaderPlugin
+
+// removes a querystring from a file path
+const stripQuery = file => {
+  const queryStringIdx = file.indexOf('?')
+  if (queryStringIdx < 0) return file
+  return file.substr(0, queryStringIdx)
+}

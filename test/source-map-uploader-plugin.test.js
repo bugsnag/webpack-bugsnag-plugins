@@ -261,4 +261,52 @@ if (process.env.WEBPACK_VERSION !== '3') {
       if (err) end(err)
     })
   })
+
+  test('it sends upon successful build (output.futureEmitAssets=true)', t => {
+    const end = err => {
+      server.close()
+      if (err) return t.fail(err.message)
+      t.end()
+    }
+
+    t.plan(7)
+    const server = http.createServer((req, res) => {
+      parseFormdata(req, function (err, data) {
+        if (err) {
+          res.end('ERR')
+          return end(err)
+        }
+        t.equal(data.fields.apiKey, 'YOUR_API_KEY', 'body should contain api key')
+        t.equal(data.fields.minifiedUrl, 'https://foobar.com/js/bundle.js', 'body should contain minified url')
+        t.equal(data.parts.length, 2, 'body should contain 2 uploads')
+        let partsRead = 0
+        data.parts.forEach(part => {
+          part.stream.pipe(concat(data => {
+            partsRead++
+            if (part.name === 'sourceMap') {
+              t.equal(part.mimetype, 'application/json')
+              try {
+                t.ok(JSON.parse(data), 'sourceMap should be valid json')
+              } catch (e) {
+                end(e)
+              }
+            }
+            if (part.name === 'minifiedFile') {
+              t.equal(part.mimetype, 'application/javascript')
+              t.ok(data.length, 'js bundle should have length')
+            }
+            if (partsRead === 2) end()
+          }))
+        })
+        res.end('OK')
+      })
+    })
+    server.listen()
+    exec(`${__dirname}/../node_modules/.bin/webpack`, {
+      env: Object.assign({}, process.env, { PORT: server.address().port }),
+      cwd: `${__dirname}/fixtures/g`
+    }, err => {
+      if (err) end(err)
+    })
+  })
 }
