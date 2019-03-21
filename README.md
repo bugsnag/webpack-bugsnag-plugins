@@ -78,6 +78,7 @@ Upload your application's sourcemap(s) to Bugsnag. When Webpack is done producin
   - `overwrite: boolean` whether you want to overwrite previously uploaded sourcemaps
   - `endpoint: string` post the build payload to a URL other than the default (`https://upload.bugsnag.com`)
   - `ignoredBundleExtensions: string[]` a list of bundle file extensions which shouldn't be uploaded (default `[ '.css' ]`)
+  - `transformSource: (source: string) => string` when you want to replace pars of a source path with a wildcard, e.g. `(source) => source.replace(buildId, '*')`
 
 #### Usage
 

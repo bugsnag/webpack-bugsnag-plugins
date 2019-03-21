@@ -19,6 +19,7 @@ class BugsnagSourceMapUploaderPlugin {
     this.overwrite = options.overwrite
     this.endpoint = options.endpoint
     this.ignoredBundleExtensions = options.ignoredBundleExtensions || [ '.css' ]
+    this.transformSource = options.transformSource
     this.validate()
   }
 
@@ -65,6 +66,12 @@ class BugsnagSourceMapUploaderPlugin {
 
           const outputChunkLocation = stripQuery(compiler.outputFileSystem.join(outputPath, source))
           const outputSourceMapLocation = stripQuery(compiler.outputFileSystem.join(outputPath, map))
+          const outputSource = this.transformSource ? this.transformSource(source) : source
+
+          if (!outputSource) {
+            console.debug(`${LOG_PREFIX} transformSource should return string`)
+            return null
+          }
 
           // only include this file if its extension is not in the ignore list
           if (this.ignoredBundleExtensions.indexOf(extname(outputChunkLocation)) !== -1) {
@@ -80,7 +87,7 @@ class BugsnagSourceMapUploaderPlugin {
               // ensure source doesn't have a leading slash (sometimes it does, e.g.
               // in laravel-mix, but this throws off the url resolve() call) see issue
               // for more detail: https://github.com/bugsnag/webpack-bugsnag-plugins/issues/11
-              source.replace(/^\//, '')
+              outputSource.replace(/^\//, '')
             ).toString()
           }
         }).filter(Boolean)
