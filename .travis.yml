@@ -14,3 +14,5 @@ matrix:
     env: WEBPACK_VERSION=4
 
 before_script: bin/ci-install.sh
+
+after_script: npm run dtslint
