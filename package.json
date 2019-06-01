@@ -17,6 +17,7 @@
   },
   "author": "Bugsnag Inc.",
   "license": "MIT",
+  "types": "./types/index.d.ts",
   "devDependencies": {
     "@types/webpack": "^4.4.32",
     "concat-stream": "^1.6.0",
