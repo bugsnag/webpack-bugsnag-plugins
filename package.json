@@ -8,7 +8,8 @@
   ],
   "main": "index.js",
   "scripts": {
-    "test": "standard && tape test/**.test.js | tap-spec"
+    "test": "standard && tape test/**.test.js | tap-spec",
+    "dtslint": "dtslint types"
   },
   "repository": {
     "type": "git",
@@ -17,7 +18,9 @@
   "author": "Bugsnag Inc.",
   "license": "MIT",
   "devDependencies": {
+    "@types/webpack": "^4.4.32",
     "concat-stream": "^1.6.0",
+    "dtslint": "^0.7.7",
     "parse-formdata": "^1.0.2",
     "standard": "^10.0.3",
     "tap-spec": "^4.1.1",
