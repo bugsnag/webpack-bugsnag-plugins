@@ -1,7 +1,6 @@
 'use strict'
 
 const upload = require('bugsnag-sourcemaps').upload
-const resolve = require('url').resolve
 const parallel = require('run-parallel-limit')
 const extname = require('path').extname
 
@@ -74,14 +73,11 @@ class BugsnagSourceMapUploaderPlugin {
           return {
             source: outputChunkLocation,
             map: outputSourceMapLocation,
-            url: resolve(
+            url: '' +
               // ensure publicPath has a trailing slash
-              publicPath.replace(/[^/]$/, '$&/'),
-              // ensure source doesn't have a leading slash (sometimes it does, e.g.
-              // in laravel-mix, but this throws off the url resolve() call) see issue
-              // for more detail: https://github.com/bugsnag/webpack-bugsnag-plugins/issues/11
-              source.replace(/^\//, '')
-            ).toString()
+              publicPath.replace(/[^/]$/, '$&/') +
+              // remove leading / or ./ from source
+              source.replace(/^\.?\//, '')
           }
         }).filter(Boolean)
       }
