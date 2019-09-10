@@ -1,6 +1,6 @@
 {
   "name": "webpack-bugsnag-plugins",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Webpack plugins for common Bugsnag actions",
   "keywords": [
     "bugsnag",
