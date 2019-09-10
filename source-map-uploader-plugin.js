@@ -5,10 +5,12 @@ const parallel = require('run-parallel-limit')
 const extname = require('path').extname
 
 const LOG_PREFIX = `[BugsnagSourceMapUploaderPlugin]`
-const PUBLIC_PATH_ERR =
-  'Cannot determine "minifiedUrl" argument for bugsnag-sourcemaps. ' +
-  'Please set "publicPath" in Webpack config ("output" section) ' +
-  'or set "publicPath" in BugsnagSourceMapUploaderPlugin constructor.'
+const PUBLIC_PATH_WARN =
+  '`publicPath` is not set.\n\n' +
+  '  Source maps must be uploaded with the pattern that matches the file path in stacktraces.\n\n' +
+  '  To make this message go away, set "publicPath" in Webpack config ("output" section)\n' +
+  '  or set "publicPath" in BugsnagSourceMapUploaderPlugin constructor.\n\n' +
+  '  In some cases, such as in a Node environment, it is safe to ignore this message.\n'
 
 class BugsnagSourceMapUploaderPlugin {
   constructor (options) {
@@ -31,17 +33,16 @@ class BugsnagSourceMapUploaderPlugin {
     const plugin = (compilation, cb) => {
       const compiler = compilation.compiler
       const stats = compilation.getStats().toJson()
-      const publicPath = this.publicPath || stats.publicPath
+      const publicPath = this.publicPath || stats.publicPath || ''
       const outputPath = compilation.getPath(compiler.outputPath)
-
-      if (!publicPath) {
-        console.warn(`${LOG_PREFIX} ${PUBLIC_PATH_ERR}`)
-        return cb()
-      }
 
       const chunkToSourceMapDescriptors = chunk => {
         // find .map files in this chunk
         const maps = chunk.files.filter(file => /.+\.map(\?.*)?$/.test(file))
+
+        if (!publicPath) {
+          console.warn(`${LOG_PREFIX} ${PUBLIC_PATH_WARN}`)
+        }
 
         return maps.map(map => {
           // for each *.map file, find a corresponding source file in the chunk
