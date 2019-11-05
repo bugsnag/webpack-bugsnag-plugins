@@ -17,6 +17,7 @@ class BugsnagSourceMapUploaderPlugin {
     this.apiKey = options.apiKey
     this.publicPath = options.publicPath
     this.appVersion = options.appVersion
+    this.codeBundleId = options.codeBundleId
     this.overwrite = options.overwrite
     this.endpoint = options.endpoint
     this.ignoredBundleExtensions = options.ignoredBundleExtensions || [ '.css' ]
@@ -103,6 +104,7 @@ class BugsnagSourceMapUploaderPlugin {
     const opts = {
       apiKey: this.apiKey,
       appVersion: this.appVersion,
+      codeBundleId" this.codeBundleId,
       minifiedUrl: sm.url,
       minifiedFile: sm.source,
       sourceMap: sm.map
