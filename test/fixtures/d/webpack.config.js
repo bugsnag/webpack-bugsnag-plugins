@@ -11,7 +11,8 @@ module.exports = {
   },
   plugins: [
     new BugsnagSourceMapUploaderPlugin({
-      apiKey: 'YOUR_API_KEY',
+			apiKey: 'YOUR_API_KEY',
+			codeBundleId: '1.0.0-b12',
       endpoint: `http://localhost:${process.env.PORT}`
     })
   ]
