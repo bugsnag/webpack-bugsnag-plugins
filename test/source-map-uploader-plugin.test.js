@@ -30,7 +30,7 @@ test('it sends upon successful build (example project #1)', t => {
     t.end()
   }
 
-  t.plan(7)
+  t.plan(8)
   const server = http.createServer((req, res) => {
     parseFormdata(req, function (err, data) {
       if (err) {
@@ -38,6 +38,7 @@ test('it sends upon successful build (example project #1)', t => {
         return end(err)
       }
       t.equal(data.fields.apiKey, 'YOUR_API_KEY', 'body should contain api key')
+      t.equal(data.fields.codeBundleId, '1.0.0-b12', 'body could contain codeBundleId')
       t.ok(/^https:\/\/foobar.com\/js\/main\.js\?[\w\d]+$/.test(data.fields.minifiedUrl), 'body should contain minified url')
       t.equal(data.parts.length, 2, 'body should contain 2 uploads')
       let partsRead = 0

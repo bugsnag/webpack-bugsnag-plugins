@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Allow setting of `codeBundleId` on `BugsnagSourceMapUploaderPlugin` (#40, fixes #38)
+
 ## 1.4.2 (2019-09-10)
 
 ### Changed

@@ -75,6 +75,7 @@ Upload your application's sourcemap(s) to Bugsnag. When Webpack is done producin
   - `apiKey: string` your Bugsnag API key __[required]__
   - `publicPath: string` the path to your bundled assets (as the browser will see them). This option must either be provided here, or as [`output.publicPath`](https://webpack.js.org/configuration/output/#output-publicpath) in your Webpack config.
   - `appVersion: string` the version of the application you are building
+  - `codeBundleId: string` the codeBundleId (e.g. for NativeScript projects)
   - `overwrite: boolean` whether you want to overwrite previously uploaded sourcemaps
   - `endpoint: string` post the build payload to a URL other than the default (`https://upload.bugsnag.com`)
   - `ignoredBundleExtensions: string[]` a list of bundle file extensions which shouldn't be uploaded (default `[ '.css' ]`)
