@@ -1,6 +1,6 @@
 'use strict'
 
-const upload = require('bugsnag-sourcemaps').upload
+const { browser } = require('@bugsnag/source-maps')
 const parallel = require('run-parallel-limit')
 const extname = require('path').extname
 
@@ -87,7 +87,7 @@ class BugsnagSourceMapUploaderPlugin {
       const sourceMaps = stats.chunks.map(chunkToSourceMapDescriptors).reduce((accum, ds) => accum.concat(ds), [])
       parallel(sourceMaps.map(sm => cb => {
         console.log(`${LOG_PREFIX} uploading sourcemap for "${sm.url}"`)
-        upload(this.getUploadOpts(sm), cb)
+        browser.uploadOne(this.getUploadOpts(sm)).then(cb, cb)
       }), 10, cb)
     }
 
@@ -105,8 +105,8 @@ class BugsnagSourceMapUploaderPlugin {
       apiKey: this.apiKey,
       appVersion: this.appVersion,
       codeBundleId: this.codeBundleId,
-      minifiedUrl: sm.url,
-      minifiedFile: sm.source,
+      bundleUrl: sm.url,
+      bundle: sm.source,
       sourceMap: sm.map
     }
     if (this.endpoint) opts.endpoint = this.endpoint
