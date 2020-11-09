@@ -4,7 +4,7 @@ const { browser } = require('@bugsnag/source-maps')
 const parallel = require('run-parallel-limit')
 const extname = require('path').extname
 
-const LOG_PREFIX = `[BugsnagSourceMapUploaderPlugin]`
+const LOG_PREFIX = '[BugsnagSourceMapUploaderPlugin]'
 const PUBLIC_PATH_WARN =
   '`publicPath` is not set.\n\n' +
   '  Source maps must be uploaded with the pattern that matches the file path in stacktraces.\n\n' +
@@ -20,7 +20,7 @@ class BugsnagSourceMapUploaderPlugin {
     this.codeBundleId = options.codeBundleId
     this.overwrite = options.overwrite
     this.endpoint = options.endpoint
-    this.ignoredBundleExtensions = options.ignoredBundleExtensions || [ '.css' ]
+    this.ignoredBundleExtensions = options.ignoredBundleExtensions || ['.css']
     this.validate()
   }
 

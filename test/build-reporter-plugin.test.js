@@ -4,6 +4,7 @@ const test = require('tape')
 const Plugin = require('../build-reporter-plugin')
 const http = require('http')
 const exec = require('child_process').exec
+const path = require('path')
 
 test('BugsnagBuildReporterPlugin', t => {
   const p = new Plugin()
@@ -32,9 +33,9 @@ test('it sends upon successful build', t => {
     })
   })
   server.listen()
-  exec(`${__dirname}/../node_modules/.bin/webpack`, {
+  exec(path.join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
     env: Object.assign({}, process.env, { PORT: server.address().port }),
-    cwd: `${__dirname}/fixtures/a`
+    cwd: path.join(__dirname, 'fixtures', 'a')
   }, (err, stdout) => {
     server.close()
     if (err) return t.fail(err.message)
@@ -52,9 +53,9 @@ test('it doesn’t send upon unsuccessful build', t => {
     })
   })
   server.listen()
-  exec(`${__dirname}/../node_modules/.bin/webpack`, {
+  exec(path.join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
     env: Object.assign({}, process.env, { PORT: server.address().port }),
-    cwd: `${__dirname}/fixtures/b`
+    cwd: path.join(__dirname, 'fixtures', 'b')
   }, (err, stdout, stderr) => {
     server.close()
     t.ok(err)
