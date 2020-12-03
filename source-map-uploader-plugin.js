@@ -3,6 +3,7 @@
 const upload = require('bugsnag-sourcemaps').upload
 const parallel = require('run-parallel-limit')
 const extname = require('path').extname
+const join = require('path').join
 
 const LOG_PREFIX = `[BugsnagSourceMapUploaderPlugin]`
 const PUBLIC_PATH_WARN =
@@ -64,8 +65,8 @@ class BugsnagSourceMapUploaderPlugin {
             return null
           }
 
-          const outputChunkLocation = stripQuery(compiler.outputFileSystem.join(outputPath, source))
-          const outputSourceMapLocation = stripQuery(compiler.outputFileSystem.join(outputPath, map))
+          const outputChunkLocation = stripQuery(join(outputPath, source))
+          const outputSourceMapLocation = stripQuery(join(outputPath, map))
 
           // only include this file if its extension is not in the ignore list
           if (this.ignoredBundleExtensions.indexOf(extname(outputChunkLocation)) !== -1) {
