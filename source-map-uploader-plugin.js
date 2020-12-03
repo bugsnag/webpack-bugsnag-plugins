@@ -4,6 +4,7 @@ const upload = require('bugsnag-sourcemaps').upload
 const parallel = require('run-parallel-limit')
 const extname = require('path').extname
 const join = require('path').join
+const webpackVersion = require('webpack').version
 
 const LOG_PREFIX = `[BugsnagSourceMapUploaderPlugin]`
 const PUBLIC_PATH_WARN =
@@ -32,6 +33,9 @@ class BugsnagSourceMapUploaderPlugin {
   }
 
   apply (compiler) {
+    // considering this is used to check for a version >= 5, it's fine to default to 0.0.0 in case it's not set
+    const webpackMajorVersion = parseInt((webpackVersion || '0.0.0').split('.')[0], 10)
+
     const plugin = (compilation, cb) => {
       const compiler = compilation.compiler
       const stats = compilation.getStats().toJson()
@@ -40,7 +44,7 @@ class BugsnagSourceMapUploaderPlugin {
 
       const chunkToSourceMapDescriptors = chunk => {
         // find .map files in this chunk
-        const maps = chunk.files.filter(file => /.+\.map(\?.*)?$/.test(file))
+        const maps = chunk[webpackMajorVersion >= 5 ? 'auxiliaryFiles' : 'files'].filter(file => /.+\.map(\?.*)?$/.test(file))
 
         if (!publicPath) {
           console.warn(`${LOG_PREFIX} ${PUBLIC_PATH_WARN}`)
