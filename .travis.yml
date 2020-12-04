@@ -9,6 +9,7 @@ node_js:
 env:
   - WEBPACK_VERSION=3
   - WEBPACK_VERSION=4
+  - WEBPACK_VERSION=5
 
 matrix:
   exclude:
@@ -16,5 +17,9 @@ matrix:
     env: WEBPACK_VERSION=4
   - node_js: "6"
     env: WEBPACK_VERSION=4
+  - node_js: "4"
+    env: WEBPACK_VERSION=5
+  - node_js: "6"
+    env: WEBPACK_VERSION=5
 
 before_script: bin/ci-install.sh
