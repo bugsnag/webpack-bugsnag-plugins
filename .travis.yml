@@ -21,5 +21,7 @@ matrix:
     env: WEBPACK_VERSION=5
   - node_js: "6"
     env: WEBPACK_VERSION=5
+  - node_js: "8"
+    env: WEBPACK_VERSION=5
 
 before_script: bin/ci-install.sh
