@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.0 (2020-12-10)
+
+- Upgrade to new @bugsnag/source-maps library (#48)
+
 ## 1.4.5 (2020-01-28)
 
 - Allow setting of `codeBundleId` on `BugsnagSourceMapUploaderPlugin` (#40, fixes #38)
