@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.6.0 (2020-12-17)
+
+- Add support for Webpack 5 (credit @chadrien) (#49)
+
 ## 1.5.0 (2020-12-10)
 
 - Upgrade to new @bugsnag/source-maps library (#48)
