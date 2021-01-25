@@ -106,6 +106,10 @@ module.exports = {
 }
 ```
 
+## Supported Webpack versions
+
+These plugins have been tested with webpack versions 3, 4 and 5.
+
 ## Support
 
 - [Search open and closed issues](https://github.com/bugsnag/webpack-bugsnag-plugins/issues?q=is%3Aissue) issues for similar problems
