@@ -3,6 +3,7 @@
 ## TBD
 
 - Update to v2 of @bugsnag/source-maps (#53)
+- Use webpack for logging (#55)
 
 ## 1.6.0 (2020-12-17)
 
