@@ -93,7 +93,7 @@ class BugsnagSourceMapUploaderPlugin {
 
       const sourceMaps = stats.chunks.map(chunkToSourceMapDescriptors).reduce((accum, ds) => accum.concat(ds), [])
       parallel(sourceMaps.map(sm => cb => {
-        logger.log(`${logPrefix}uploading sourcemap for "${sm.url}"`)
+        logger.info(`${logPrefix}uploading sourcemap for "${sm.url}"`)
         browser.uploadOne(this.getUploadOpts(sm)).then(cb, cb)
       }), 10, cb)
     }
