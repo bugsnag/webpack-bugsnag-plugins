@@ -1,6 +1,6 @@
 # Changelog
 
-## TBD
+## 1.7.0 (2021-05-18)
 
 - Update to v2 of @bugsnag/source-maps (#53)
 - Use webpack for logging (#55)
