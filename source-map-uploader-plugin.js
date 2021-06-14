@@ -41,13 +41,15 @@ class BugsnagSourceMapUploaderPlugin {
       const stats = compilation.getStats().toJson()
       const publicPath = this.publicPath || stats.publicPath || ''
       const outputPath = compilation.getPath(compiler.outputPath)
+      const logger = compiler.getInfrastructureLogger ? compiler.getInfrastructureLogger('BugsnagSourceMapUploaderPlugin') : console
+      const logPrefix = compiler.getInfrastructureLogger ? '' : `${LOG_PREFIX} `
 
       const chunkToSourceMapDescriptors = chunk => {
         // find .map files in this chunk
         const maps = chunk[webpackMajorVersion >= 5 ? 'auxiliaryFiles' : 'files'].filter(file => /.+\.map(\?.*)?$/.test(file))
 
         if (!publicPath) {
-          console.warn(`${LOG_PREFIX} ${PUBLIC_PATH_WARN}`)
+          logger.warn(`${logPrefix}${PUBLIC_PATH_WARN}`)
         }
 
         return maps.map(map => {
@@ -55,17 +57,17 @@ class BugsnagSourceMapUploaderPlugin {
           const source = chunk.files.find(file => map.replace('.map', '').endsWith(file))
 
           if (!source) {
-            console.warn(`${LOG_PREFIX} no corresponding source found for "${map}" in chunk "${chunk.id}"`)
+            logger.warn(`${logPrefix}no corresponding source found for "${map}" in chunk "${chunk.id}"`)
             return null
           }
 
           if (!compilation.assets[source]) {
-            console.debug(`${LOG_PREFIX} source asset not found in compilation output "${source}"`)
+            logger.debug(`${logPrefix}source asset not found in compilation output "${source}"`)
             return null
           }
 
           if (!compilation.assets[map]) {
-            console.debug(`${LOG_PREFIX} source map not found in compilation output "${map}"`)
+            logger.debug(`${logPrefix}source map not found in compilation output "${map}"`)
             return null
           }
 
@@ -91,7 +93,7 @@ class BugsnagSourceMapUploaderPlugin {
 
       const sourceMaps = stats.chunks.map(chunkToSourceMapDescriptors).reduce((accum, ds) => accum.concat(ds), [])
       parallel(sourceMaps.map(sm => cb => {
-        console.log(`${LOG_PREFIX} uploading sourcemap for "${sm.url}"`)
+        logger.info(`${logPrefix}uploading sourcemap for "${sm.url}"`)
         browser.uploadOne(this.getUploadOpts(sm)).then(cb, cb)
       }), 10, cb)
     }

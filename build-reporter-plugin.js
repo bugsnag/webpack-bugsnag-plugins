@@ -12,7 +12,13 @@ class BugsnagBuildReporterPlugin {
     const plugin = (compilation, cb) => {
       const stats = compilation.getStats()
       if (stats.hasErrors()) return cb(null)
-      reportBuild(this.build, this.options)
+      const options = Object.assign(this.options,
+        !this.options.logger && compiler.getInfrastructureLogger
+          ? { logger: compiler.getInfrastructureLogger('BugsnagBuildReporterPlugin') }
+          : {}
+      )
+
+      reportBuild(this.build, options)
         .then(() => cb(null))
         .catch((/* err */) => {
           // ignore err: a failure to notify Bugsnag shouldn't fail the build
