@@ -1,8 +1,9 @@
 # Changelog
 
-## Unreleased
+## 1.8.0 (2021-07-06)
 
 - Use webpack for logging (#55)
+- Upgrade build reporter to latest version (#57)
 
 ## 1.7.0 (2021-05-18)
 
