@@ -38,3 +38,39 @@ work on your suggested feature.
 That said, we have had some tremendous contributions from the community in the past,
 so use your best judgement. What we want to avoid here is anybody feeling like they’ve
 wasted their time!
+
+## Releases
+
+To start a release:
+
+- decide on a version number
+- create a new release branch from `master` with the version number in the branch name `git checkout -b release/vX.Y.Z`
+- review commits made to `master` since the last release
+- update `CHANGELOG.md` reflecting the above changes, release version, and release date and commit to your release branch
+- make a PR from your release branch to `master` entitled `Release vX.Y.Z`
+- get the release PR reviewed
+
+Once the release PR has been approved, merge the PR into `master`. You are now ready to make the release. Ensure you are logged in to npm and that you have access to publish the package.
+
+- Make sure you are on the latest `master`.
+
+- Bump the package version and push the new commit and tag:
+
+  ```
+  npm version <major|minor|patch>
+  git push origin master
+  git push --tags
+  ```
+
+- Publish the new version to npm:
+
+  ```
+  npm publish
+  ```
+
+Finally:
+
+- create a release on GitHub https://github.com/bugsnag/webpack-bugsnag-plugins/releases/new
+- Use the existing tag created during the version step above
+- copy the release notes from `CHANGELOG.md`
+- publish the release
