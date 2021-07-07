@@ -4,7 +4,6 @@
 
 - Use webpack for logging (#55)
 - Upgrade build reporter to latest version (#57)
-- Upgrade source map uploader to latest version (#60)
 
 ## 1.7.0 (2021-05-18)
 
