@@ -1,9 +1,13 @@
 # Changelog
 
+## 1.8.0 (2021-07-07)
+
+- Use webpack for logging (#55)
+- Upgrade build reporter to latest version (#57)
+
 ## 1.7.0 (2021-05-18)
 
 - Update to v2 of @bugsnag/source-maps (#53)
-- Use webpack for logging (#55)
 
 ## 1.6.0 (2020-12-17)
 
