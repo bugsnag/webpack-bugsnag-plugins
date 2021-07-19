@@ -79,15 +79,17 @@ class BugsnagSourceMapUploaderPlugin {
             return null
           }
 
+          // encode any special characters in the source path
+          escapedSource = source.split('/').map((s) => encodeURIComponent(s)).join('/')
+
           return {
             source: outputChunkLocation,
             map: outputSourceMapLocation,
-            url: encodeURIComponent('' +
+            url: '' +
               // ensure publicPath has a trailing slash
               publicPath.replace(/[^/]$/, '$&/') +
               // remove leading / or ./ from source
-              source.replace(/^\.?\//, '')
-            )
+              escapedSource.replace(/^\.?\//, '')
           }
         }).filter(Boolean)
       }
