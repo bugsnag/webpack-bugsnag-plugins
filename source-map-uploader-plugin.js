@@ -82,7 +82,7 @@ class BugsnagSourceMapUploaderPlugin {
           return {
             source: outputChunkLocation,
             map: outputSourceMapLocation,
-            url: encodeURI('' +
+            url: encodeURIComponent('' +
               // ensure publicPath has a trailing slash
               publicPath.replace(/[^/]$/, '$&/') +
               // remove leading / or ./ from source
