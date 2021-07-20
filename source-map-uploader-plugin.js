@@ -80,7 +80,7 @@ class BugsnagSourceMapUploaderPlugin {
           }
 
           // encode any special characters in the source path
-          escapedSource = source.split('/').map((s) => encodeURIComponent(s)).join('/')
+          const escapedSource = source.split('/').map((s) => encodeURIComponent(s)).join('/')
 
           return {
             source: outputChunkLocation,
