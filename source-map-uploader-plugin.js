@@ -81,7 +81,7 @@ class BugsnagSourceMapUploaderPlugin {
 
           // encode any special characters in the source path
           // this helps to match the reported source path in the stacktrace
-          const escapedSource = source.replace(/%40/g, '@').replace(/%5B/g, '[').replace(/%5D/g, ']')
+          const escapedSource = source.replace(/@/g, '%40').replace(/\[/g, '%5B').replace(/\]/g, '%5D')
 
           return {
             source: outputChunkLocation,
