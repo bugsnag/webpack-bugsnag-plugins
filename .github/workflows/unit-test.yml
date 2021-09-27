@@ -1,9 +1,6 @@
 name: "unit test"
-on:
-  pull_request:
-  push:
-    branches:
-      - next 
+
+on: push
 
 jobs:
   build:
