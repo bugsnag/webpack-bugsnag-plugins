@@ -17,5 +17,5 @@ jobs:
         uses: actions/checkout@v1
       - run: bin/ci-install.sh
         env:
-          NODE_AUTH_TOKEN: ${{ matrix.webpack }}
+          WEBPACK_VERSION: ${{ matrix.webpack }}
       - run: npm test
