@@ -15,8 +15,8 @@ jobs:
           node-version: ${{ matrix.node }}
       - name: Checkout PR branch
         uses: actions/checkout@v1
+      - run: npm install
       - run: bin/ci-install.sh
         env:
           WEBPACK_VERSION: ${{ matrix.webpack }}
-      - run: npm install --only=dev
       - run: npm test
