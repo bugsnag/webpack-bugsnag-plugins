@@ -18,4 +18,5 @@ jobs:
       - run: bin/ci-install.sh
         env:
           WEBPACK_VERSION: ${{ matrix.webpack }}
+      - run: npm install --only=dev
       - run: npm test
