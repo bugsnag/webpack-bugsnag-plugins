@@ -13,6 +13,8 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
+      - name: Checkout PR branch
+        uses: actions/checkout@v1
       - run: bin/ci-install.sh
         env:
           NODE_AUTH_TOKEN: ${{ matrix.webpack }}
