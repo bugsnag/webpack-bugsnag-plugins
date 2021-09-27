@@ -9,6 +9,8 @@ jobs:
       matrix:
         node: [10, 12, 14]
         webpack: [3, 4, 5]
+    env:
+      WEBPACK_VERSION: ${{ matrix.webpack }}
     steps:
       - uses: actions/setup-node@v2
         with:
@@ -17,6 +19,4 @@ jobs:
         uses: actions/checkout@v1
       - run: npm install
       - run: bin/ci-install.sh
-        env:
-          WEBPACK_VERSION: ${{ matrix.webpack }}
       - run: npm test
