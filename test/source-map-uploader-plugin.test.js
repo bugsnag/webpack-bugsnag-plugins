@@ -32,7 +32,7 @@ test('it sends upon successful build (example project #1)', t => {
     t.end()
   }
 
-  t.plan(7)
+  t.plan(8)
   const server = http.createServer((req, res) => {
     parseFormdata(req, once(function (err, data) {
       if (err) {
@@ -49,11 +49,14 @@ test('it sends upon successful build (example project #1)', t => {
           partsRead++
           if (part.name === 'sourceMap') {
             t.equal(part.mimetype, 'application/json')
+            let parsed
             try {
-              t.ok(JSON.parse(data), 'sourceMap should be valid json')
+              parsed = JSON.parse(data)
+              t.ok(parsed, 'sourceMap should be valid json')
             } catch (e) {
               end(e)
             }
+            t.same(parsed.sources, ['app.js'])
           }
           if (part.name === 'minifiedFile') {
             t.equal(part.mimetype, 'application/javascript')
@@ -81,7 +84,7 @@ test('it sends upon successful build (example project #2)', t => {
     t.end()
   }
 
-  t.plan(7)
+  t.plan(8)
   const server = http.createServer((req, res) => {
     parseFormdata(req, once(function (err, data) {
       if (err) {
@@ -96,12 +99,15 @@ test('it sends upon successful build (example project #2)', t => {
         part.stream.pipe(concat(data => {
           partsRead++
           if (part.name === 'sourceMap') {
+            let parsed
             t.equal(part.mimetype, 'application/json')
             try {
-              t.ok(JSON.parse(data), 'sourceMap should be valid json')
+              parsed = JSON.parse(data)
+              t.ok(parsed, 'sourceMap should be valid json')
             } catch (e) {
               end(e)
             }
+            t.same(parsed.sources, ['app.js'])
           }
           if (part.name === 'minifiedFile') {
             t.equal(part.mimetype, 'application/javascript')
