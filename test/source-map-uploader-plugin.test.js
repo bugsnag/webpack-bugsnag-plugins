@@ -108,6 +108,7 @@ test('it sends upon successful build (example project #2)', t => {
               end(e)
             }
             t.ok(parsed.sources.includes('app.js'))
+            t.equal(parsed, 'app.js')
           }
           if (part.name === 'minifiedFile') {
             t.equal(part.mimetype, 'application/javascript')
