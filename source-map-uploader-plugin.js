@@ -23,6 +23,7 @@ class BugsnagSourceMapUploaderPlugin {
     this.overwrite = options.overwrite
     this.endpoint = options.endpoint
     this.ignoredBundleExtensions = options.ignoredBundleExtensions || ['.css']
+    this.projectRoot = options.projectRoot;
     this.validate()
   }
 
@@ -118,6 +119,7 @@ class BugsnagSourceMapUploaderPlugin {
     }
     if (this.endpoint) opts.endpoint = this.endpoint
     if (this.overwrite) opts.overwrite = this.overwrite
+    if (this.projectRoot) opts.projectRoot = this.projectRoot;
     return opts
   }
 }
