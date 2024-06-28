@@ -1,5 +1,3 @@
-'use strict'
-
 const test = require('tape')
 const Plugin = require('../build-reporter-plugin')
 const http = require('http')
