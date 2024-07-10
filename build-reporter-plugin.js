@@ -1,6 +1,4 @@
-'use strict'
-
-const reportBuild = require('bugsnag-build-reporter')
+import reportBuild from 'bugsnag-build-reporter'
 
 class BugsnagBuildReporterPlugin {
   constructor (build, options) {
@@ -36,4 +34,4 @@ class BugsnagBuildReporterPlugin {
   }
 }
 
-module.exports = BugsnagBuildReporterPlugin
+export default BugsnagBuildReporterPlugin

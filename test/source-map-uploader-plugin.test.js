@@ -1,13 +1,14 @@
-'use strict'
+import test from 'tape'
+import Plugin from '../source-map-uploader-plugin.js'
+import { createServer } from 'http'
+import formidable from 'formidable'
+import { exec } from 'child_process'
+import concat from 'concat-stream'
+import { join, dirname } from 'path'
+import { fileURLToPath } from 'url'
+import once from 'once'
 
-const test = require('tape')
-const Plugin = require('../source-map-uploader-plugin')
-const http = require('http')
-const formidable = require('formidable')
-const exec = require('child_process').exec
-const concat = require('concat-stream')
-const path = require('path')
-const once = require('once')
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 test('BugsnagSourceMapUploaderPlugin', t => {
   try {
@@ -33,7 +34,7 @@ test('it sends upon successful build (example project #1)', t => {
   }
 
   t.plan(7)
-  const server = http.createServer((req, res) => {
+  const server = createServer((req, res) => {
     formidable().parse(req, once(function (err, fields, parts) {
       if (err) {
         res.end('ERR')
@@ -66,9 +67,9 @@ test('it sends upon successful build (example project #1)', t => {
     }))
   })
   server.listen()
-  exec(path.join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
+  exec(join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
     env: Object.assign({}, process.env, { PORT: server.address().port }),
-    cwd: path.join(__dirname, 'fixtures', 'd')
+    cwd: join(__dirname, 'fixtures', 'd')
   }, (err, stdout, stderr) => {
     if (err) end(err)
   })
@@ -82,7 +83,7 @@ test('it sends upon successful build (example project #2)', t => {
   }
 
   t.plan(7)
-  const server = http.createServer((req, res) => {
+  const server = createServer((req, res) => {
     formidable().parse(req, once(function (err, fields, parts) {
       if (err) {
         res.end('ERR')
@@ -114,9 +115,9 @@ test('it sends upon successful build (example project #2)', t => {
     }))
   })
   server.listen()
-  exec(path.join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
+  exec(join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
     env: Object.assign({}, process.env, { PORT: server.address().port }),
-    cwd: path.join(__dirname, 'fixtures', 'c')
+    cwd: join(__dirname, 'fixtures', 'c')
   }, err => {
     if (err) end(err)
   })
@@ -131,7 +132,7 @@ if (process.env.WEBPACK_VERSION !== '3') {
     }
 
     t.plan(7)
-    const server = http.createServer((req, res) => {
+    const server = createServer((req, res) => {
       formidable().parse(req, once(function (err, fields, parts) {
         if (err) {
           res.end('ERR')
@@ -163,9 +164,9 @@ if (process.env.WEBPACK_VERSION !== '3') {
       }))
     })
     server.listen()
-    exec(path.join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
+    exec(join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
       env: Object.assign({}, process.env, { PORT: server.address().port }),
-      cwd: path.join(__dirname, 'fixtures', 'f')
+      cwd: join(__dirname, 'fixtures', 'f')
     }, err => {
       if (err) end(err)
     })
@@ -191,7 +192,7 @@ if (process.env.WEBPACK_VERSION !== '3') {
         end()
       }
 
-      const server = http.createServer((req, res) => {
+      const server = createServer((req, res) => {
         formidable().parse(req, once(function (err, fields, parts) {
           if (err) {
             res.end('ERR')
@@ -207,9 +208,9 @@ if (process.env.WEBPACK_VERSION !== '3') {
         }))
       })
       server.listen()
-      exec(path.join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
+      exec(join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
         env: Object.assign({}, process.env, { PORT: server.address().port }),
-        cwd: path.join(__dirname, 'fixtures', 'e')
+        cwd: join(__dirname, 'fixtures', 'e')
       }, (err) => {
         if (err) end(err)
       })
@@ -240,7 +241,7 @@ if (process.env.WEBPACK_VERSION !== '3') {
       end()
     }
 
-    const server = http.createServer((req, res) => {
+    const server = createServer((req, res) => {
       formidable().parse(req, once(function (err, fields, parts) {
         if (err) {
           res.end('ERR')
@@ -257,9 +258,9 @@ if (process.env.WEBPACK_VERSION !== '3') {
       }))
     })
     server.listen()
-    exec(path.join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
+    exec(join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
       env: Object.assign({}, process.env, { PORT: server.address().port, IGNORED_EXTENSIONS: '.php,.exe' }),
-      cwd: path.join(__dirname, 'fixtures', 'e')
+      cwd: join(__dirname, 'fixtures', 'e')
     }, (err) => {
       if (err) end(err)
     })
@@ -273,7 +274,7 @@ if (process.env.WEBPACK_VERSION !== '3') {
     }
 
     t.plan(7)
-    const server = http.createServer((req, res) => {
+    const server = createServer((req, res) => {
       formidable().parse(req, once(function (err, fields, parts) {
         if (err) {
           res.end('ERR')
@@ -305,9 +306,9 @@ if (process.env.WEBPACK_VERSION !== '3') {
       }))
     })
     server.listen()
-    exec(path.join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
+    exec(join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
       env: Object.assign({}, process.env, { PORT: server.address().port }),
-      cwd: path.join(__dirname, 'fixtures', 'g')
+      cwd: join(__dirname, 'fixtures', 'g')
     }, err => {
       if (err) end(err)
     })

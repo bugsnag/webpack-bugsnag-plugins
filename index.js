@@ -1,7 +1,7 @@
-const BugsnagBuildReporterPlugin = require('./build-reporter-plugin')
-const BugsnagSourceMapUploaderPlugin = require('./source-map-uploader-plugin')
+import BugsnagBuildReporterPlugin from './build-reporter-plugin'
+import BugsnagSourceMapUploaderPlugin from './source-map-uploader-plugin'
 
-module.exports = {
-  BugsnagBuildReporterPlugin: BugsnagBuildReporterPlugin,
-  BugsnagSourceMapUploaderPlugin: BugsnagSourceMapUploaderPlugin
+export default {
+  BugsnagBuildReporterPlugin,
+  BugsnagSourceMapUploaderPlugin
 }

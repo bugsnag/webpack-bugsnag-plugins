@@ -1,10 +1,7 @@
-'use strict'
-
-const { browser } = require('@bugsnag/source-maps')
-const parallel = require('run-parallel-limit')
-const extname = require('path').extname
-const join = require('path').join
-const webpackVersion = require('webpack').version
+import { browser } from '@bugsnag/source-maps'
+import parallel from 'run-parallel-limit'
+import { extname, join } from 'path'
+import webpack from 'webpack'
 
 const LOG_PREFIX = '[BugsnagSourceMapUploaderPlugin]'
 const PUBLIC_PATH_WARN =
@@ -34,7 +31,7 @@ class BugsnagSourceMapUploaderPlugin {
 
   apply (compiler) {
     // considering this is used to check for a version >= 5, it's fine to default to 0.0.0 in case it's not set
-    const webpackMajorVersion = parseInt((webpackVersion || '0.0.0').split('.')[0], 10)
+    const webpackMajorVersion = parseInt((webpack.version || '0.0.0').split('.')[0], 10)
 
     const plugin = (compilation, cb) => {
       const compiler = compilation.compiler
@@ -122,7 +119,7 @@ class BugsnagSourceMapUploaderPlugin {
   }
 }
 
-module.exports = BugsnagSourceMapUploaderPlugin
+export default BugsnagSourceMapUploaderPlugin
 
 // removes a querystring from a file path
 const stripQuery = file => {
