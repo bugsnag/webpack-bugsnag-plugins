@@ -3,7 +3,7 @@
 const test = require('tape')
 const Plugin = require('../source-map-uploader-plugin')
 const http = require('http')
-const parseFormdata = require('parse-formdata')
+const formidable = require('formidable')
 const exec = require('child_process').exec
 const concat = require('concat-stream')
 const path = require('path')
@@ -34,17 +34,17 @@ test('it sends upon successful build (example project #1)', t => {
 
   t.plan(7)
   const server = http.createServer((req, res) => {
-    parseFormdata(req, once(function (err, data) {
+    formidable().parse(req, once(function (err, fields, parts) {
       if (err) {
         res.end('ERR')
         return end(err)
       }
-      t.equal(data.fields.apiKey, 'YOUR_API_KEY', 'body should contain api key')
-      t.equal(data.fields.codeBundleId, '1.0.0-b12', 'body could contain codeBundleId')
-      t.ok(/^https:\/\/foobar.com\/js\/main\.js\?[\w\d]+$/.test(data.fields.minifiedUrl), 'body should contain minified url')
-      t.equal(data.parts.length, 2, 'body should contain 2 uploads')
+      t.equal(fields.apiKey, 'YOUR_API_KEY', 'body should contain api key')
+      t.equal(fields.codeBundleId, '1.0.0-b12', 'body could contain codeBundleId')
+      t.ok(/^https:\/\/foobar.com\/js\/main\.js\?[\w\d]+$/.test(fields.minifiedUrl), 'body should contain minified url')
+      t.equal(parts.length, 2, 'body should contain 2 uploads')
       let partsRead = 0
-      data.parts.forEach(part => {
+      parts.forEach(part => {
         part.stream.pipe(concat(data => {
           partsRead++
           if (part.name === 'sourceMap') {
@@ -83,16 +83,16 @@ test('it sends upon successful build (example project #2)', t => {
 
   t.plan(7)
   const server = http.createServer((req, res) => {
-    parseFormdata(req, once(function (err, data) {
+    formidable().parse(req, once(function (err, fields, parts) {
       if (err) {
         res.end('ERR')
         return end(err)
       }
-      t.equal(data.fields.apiKey, 'YOUR_API_KEY', 'body should contain api key')
-      t.equal(data.fields.minifiedUrl, 'https://foobar.com/js/bundle.js', 'body should contain minified url')
-      t.equal(data.parts.length, 2, 'body should contain 2 uploads')
+      t.equal(fields.apiKey, 'YOUR_API_KEY', 'body should contain api key')
+      t.equal(fields.minifiedUrl, 'https://foobar.com/js/bundle.js', 'body should contain minified url')
+      t.equal(parts.length, 2, 'body should contain 2 uploads')
       let partsRead = 0
-      data.parts.forEach(part => {
+      parts.forEach(part => {
         part.stream.pipe(concat(data => {
           partsRead++
           if (part.name === 'sourceMap') {
@@ -132,16 +132,16 @@ if (process.env.WEBPACK_VERSION !== '3') {
 
     t.plan(7)
     const server = http.createServer((req, res) => {
-      parseFormdata(req, once(function (err, data) {
+      formidable().parse(req, once(function (err, fields, parts) {
         if (err) {
           res.end('ERR')
           return end(err)
         }
-        t.equal(data.fields.apiKey, 'YOUR_API_KEY', 'body should contain api key')
-        t.equal(data.fields.minifiedUrl, '*/dist/main.js', 'body should contain minified url')
-        t.equal(data.parts.length, 2, 'body should contain 2 uploads')
+        t.equal(fields.apiKey, 'YOUR_API_KEY', 'body should contain api key')
+        t.equal(fields.minifiedUrl, '*/dist/main.js', 'body should contain minified url')
+        t.equal(parts.length, 2, 'body should contain 2 uploads')
         let partsRead = 0
-        data.parts.forEach(part => {
+        parts.forEach(part => {
           part.stream.pipe(concat(data => {
             partsRead++
             if (part.name === 'sourceMap') {
@@ -192,15 +192,15 @@ if (process.env.WEBPACK_VERSION !== '3') {
       }
 
       const server = http.createServer((req, res) => {
-        parseFormdata(req, once(function (err, data) {
+        formidable().parse(req, once(function (err, fields, parts) {
           if (err) {
             res.end('ERR')
             return end(err)
           }
           requests.push({
-            apiKey: data.fields.apiKey,
-            minifiedUrl: data.fields.minifiedUrl,
-            parts: data.parts.map(p => ({ name: p.name, filename: p.filename }))
+            apiKey: fields.apiKey,
+            minifiedUrl: fields.minifiedUrl,
+            parts: parts.map(p => ({ name: p.name, filename: p.filename }))
           })
           res.end('OK')
           done()
@@ -241,15 +241,15 @@ if (process.env.WEBPACK_VERSION !== '3') {
     }
 
     const server = http.createServer((req, res) => {
-      parseFormdata(req, once(function (err, data) {
+      formidable().parse(req, once(function (err, fields, parts) {
         if (err) {
           res.end('ERR')
           return end(err)
         }
         requests.push({
-          apiKey: data.fields.apiKey,
-          minifiedUrl: data.fields.minifiedUrl,
-          parts: data.parts.map(p => ({ name: p.name, filename: p.filename }))
+          apiKey: fields.apiKey,
+          minifiedUrl: fields.minifiedUrl,
+          parts: parts.map(p => ({ name: p.name, filename: p.filename }))
         })
         res.end('OK')
         if (requests.length < 2) return
@@ -274,16 +274,16 @@ if (process.env.WEBPACK_VERSION !== '3') {
 
     t.plan(7)
     const server = http.createServer((req, res) => {
-      parseFormdata(req, once(function (err, data) {
+      formidable().parse(req, once(function (err, fields, parts) {
         if (err) {
           res.end('ERR')
           return end(err)
         }
-        t.equal(data.fields.apiKey, 'YOUR_API_KEY', 'body should contain api key')
-        t.equal(data.fields.minifiedUrl, 'https://foobar.com/js/bundle.js', 'body should contain minified url')
-        t.equal(data.parts.length, 2, 'body should contain 2 uploads')
+        t.equal(fields.apiKey, 'YOUR_API_KEY', 'body should contain api key')
+        t.equal(fields.minifiedUrl, 'https://foobar.com/js/bundle.js', 'body should contain minified url')
+        t.equal(parts.length, 2, 'body should contain 2 uploads')
         let partsRead = 0
-        data.parts.forEach(part => {
+        parts.forEach(part => {
           part.stream.pipe(concat(data => {
             partsRead++
             if (part.name === 'sourceMap') {
