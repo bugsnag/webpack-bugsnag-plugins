@@ -1,20 +1,30 @@
-import { BugsnagSourceMapUploaderPlugin } from '../../../'
+import BugsnagSourceMapUploaderPlugin from '../../../source-map-uploader-plugin.js'
+import { dirname } from 'path'
+import { fileURLToPath } from 'url'
 
-export const entry = './app.js'
-export const devtool = 'hidden-source-map'
-export const output = Object.assign(
-  {
+const __dirname = dirname(fileURLToPath(import.meta.url))
+
+const config = {
+  entry: './app.js',
+  devtool: 'hidden-source-map',
+  output: {
     path: __dirname,
     filename: './bundle.js',
     publicPath: 'https://foobar.com/js',
   },
-  // As per webpack documentation:
-  // "output.futureEmitAssets option will be removed in webpack v5.0.0 and this behaviour will become the new default."
-  // so it can safely be omitted for webpack>=5 while still getting a similar result
-  parseInt(process.env.WEBPACK_VERSION, 10) < 5 ? { futureEmitAssets: true } : {})
-export const plugins = [
-  new BugsnagSourceMapUploaderPlugin({
-    apiKey: 'YOUR_API_KEY',
-    endpoint: `http://localhost:${process.env.PORT}`
-  })
-]
+  plugins: [
+    new BugsnagSourceMapUploaderPlugin({
+      apiKey: 'YOUR_API_KEY',
+      endpoint: `http://localhost:${process.env.PORT}`
+    })
+  ]
+};
+
+// As per webpack documentation:
+// "output.futureEmitAssets option will be removed in webpack v5.0.0 and this behaviour will become the new default."
+// so it can safely be omitted for webpack>=5 while still getting a similar result
+if (parseInt(process.env.WEBPACK_VERSION, 10) < 5) {
+  config.futureEmitAssets = true;
+}
+
+export default config;

@@ -1,18 +1,22 @@
-import { BugsnagSourceMapUploaderPlugin } from '../../../';
+import BugsnagSourceMapUploaderPlugin from '../../../source-map-uploader-plugin.js';
 import { SourceMapDevToolPlugin } from 'webpack';
 
-export const entry = './src/index.js';
-export const devtool = false;
-export const plugins = [
-  new SourceMapDevToolPlugin({
-    filename: '../tmp/[file].map'
-  }),
-  new BugsnagSourceMapUploaderPlugin({
-    apiKey: 'YOUR_API_KEY',
-    endpoint: `http://localhost:${process.env.PORT}`
-  })
-];
-export const output = {
-  publicPath: '*/dist'
+const config = {
+  entry: './src/index.js',
+  devtool: false,
+  plugins: [
+    new SourceMapDevToolPlugin({
+      filename: '../tmp/[file].map'
+    }),
+    new BugsnagSourceMapUploaderPlugin({
+      apiKey: 'YOUR_API_KEY',
+      endpoint: `http://localhost:${process.env.PORT}`
+    })
+  ],
+  output: {
+    publicPath: '*/dist'
+  },
+  mode: "development",
 };
-export const mode = 'development';
+
+export default config;

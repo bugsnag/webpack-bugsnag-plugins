@@ -10,6 +10,21 @@ import once from 'once'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
+const validateParts = (parts, t, end) => {
+  parts.sourceMap[0].stream.pipe(concat(data => {
+    t.equal(parts.sourceMap[0], 'application/json')
+    try {
+      t.ok(JSON.parse(data), 'sourceMap should be valid json')
+    } catch (e) {
+      end(e)
+    }
+  }))
+  parts.minifiedFile[0].stream.pipe(concat(data => {
+    t.equal(parts.minifiedFile[0].mimetype, 'application/javascript')
+    t.ok(data.length, 'js bundle should have length')
+  }))
+}
+
 test('BugsnagSourceMapUploaderPlugin', t => {
   try {
     const p = new Plugin({})
@@ -40,29 +55,11 @@ test('it sends upon successful build (example project #1)', t => {
         res.end('ERR')
         return end(err)
       }
-      t.equal(fields.apiKey, 'YOUR_API_KEY', 'body should contain api key')
-      t.equal(fields.codeBundleId, '1.0.0-b12', 'body could contain codeBundleId')
-      t.ok(/^https:\/\/foobar.com\/js\/main\.js\?[\w\d]+$/.test(fields.minifiedUrl), 'body should contain minified url')
-      t.equal(parts.length, 2, 'body should contain 2 uploads')
-      let partsRead = 0
-      parts.forEach(part => {
-        part.stream.pipe(concat(data => {
-          partsRead++
-          if (part.name === 'sourceMap') {
-            t.equal(part.mimetype, 'application/json')
-            try {
-              t.ok(JSON.parse(data), 'sourceMap should be valid json')
-            } catch (e) {
-              end(e)
-            }
-          }
-          if (part.name === 'minifiedFile') {
-            t.equal(part.mimetype, 'application/javascript')
-            // t.ok(data.length, 'js bundle should have length')
-          }
-          if (partsRead === 2) end()
-        }))
-      })
+      t.equal(fields.apiKey[0], 'YOUR_API_KEY', 'body should contain api key')
+      t.equal(fields.codeBundleId[0], '1.0.0-b12', 'body could contain codeBundleId')
+      t.ok(/^https:\/\/foobar.com\/js\/main\.js\?[\w\d]+$/.test(fields.minifiedUrl[0]), 'body should contain minified url')
+      t.equal(Object.keys(parts).length, 2, 'body should contain 2 uploads')
+      validateParts(parts, t, end)
       res.end('OK')
     }))
   })
@@ -89,28 +86,10 @@ test('it sends upon successful build (example project #2)', t => {
         res.end('ERR')
         return end(err)
       }
-      t.equal(fields.apiKey, 'YOUR_API_KEY', 'body should contain api key')
-      t.equal(fields.minifiedUrl, 'https://foobar.com/js/bundle.js', 'body should contain minified url')
-      t.equal(parts.length, 2, 'body should contain 2 uploads')
-      let partsRead = 0
-      parts.forEach(part => {
-        part.stream.pipe(concat(data => {
-          partsRead++
-          if (part.name === 'sourceMap') {
-            t.equal(part.mimetype, 'application/json')
-            try {
-              t.ok(JSON.parse(data), 'sourceMap should be valid json')
-            } catch (e) {
-              end(e)
-            }
-          }
-          if (part.name === 'minifiedFile') {
-            t.equal(part.mimetype, 'application/javascript')
-            t.ok(data.length, 'js bundle should have length')
-          }
-          if (partsRead === 2) end()
-        }))
-      })
+      t.equal(fields.apiKey[0], 'YOUR_API_KEY', 'body should contain api key')
+      t.equal(fields.minifiedUrl[0], 'https://foobar.com/js/bundle.js', 'body should contain minified url')
+      t.equal(Object.keys(parts).length, 2, 'body should contain 2 uploads')
+      validateParts(parts, t, end)
       res.end('OK')
     }))
   })
@@ -138,28 +117,10 @@ if (process.env.WEBPACK_VERSION !== '3') {
           res.end('ERR')
           return end(err)
         }
-        t.equal(fields.apiKey, 'YOUR_API_KEY', 'body should contain api key')
-        t.equal(fields.minifiedUrl, '*/dist/main.js', 'body should contain minified url')
-        t.equal(parts.length, 2, 'body should contain 2 uploads')
-        let partsRead = 0
-        parts.forEach(part => {
-          part.stream.pipe(concat(data => {
-            partsRead++
-            if (part.name === 'sourceMap') {
-              t.equal(part.mimetype, 'application/json')
-              try {
-                t.ok(JSON.parse(data), 'sourceMap should be valid json')
-              } catch (e) {
-                end(e)
-              }
-            }
-            if (part.name === 'minifiedFile') {
-              t.equal(part.mimetype, 'application/javascript')
-              t.ok(data.length, 'js bundle should have length')
-            }
-            if (partsRead === 2) end()
-          }))
-        })
+        t.equal(fields.apiKey[0], 'YOUR_API_KEY', 'body should contain api key')
+        t.equal(fields.minifiedUrl[0], '*/dist/main.js', 'body should contain minified url')
+        t.equal(Object.keys(parts).length, 2, 'body should contain 2 uploads')
+        validateParts(parts, t, end)
         res.end('OK')
       }))
     })
@@ -199,8 +160,8 @@ if (process.env.WEBPACK_VERSION !== '3') {
             return end(err)
           }
           requests.push({
-            apiKey: fields.apiKey,
-            minifiedUrl: fields.minifiedUrl,
+            apiKey: fields.apiKey[0],
+            minifiedUrl: fields.minifiedUrl[0],
             parts: parts.map(p => ({ name: p.name, filename: p.filename }))
           })
           res.end('OK')
@@ -248,8 +209,8 @@ if (process.env.WEBPACK_VERSION !== '3') {
           return end(err)
         }
         requests.push({
-          apiKey: fields.apiKey,
-          minifiedUrl: fields.minifiedUrl,
+          apiKey: fields.apiKey[0],
+          minifiedUrl: fields.minifiedUrl[0],
           parts: parts.map(p => ({ name: p.name, filename: p.filename }))
         })
         res.end('OK')
@@ -280,28 +241,10 @@ if (process.env.WEBPACK_VERSION !== '3') {
           res.end('ERR')
           return end(err)
         }
-        t.equal(fields.apiKey, 'YOUR_API_KEY', 'body should contain api key')
-        t.equal(fields.minifiedUrl, 'https://foobar.com/js/bundle.js', 'body should contain minified url')
-        t.equal(parts.length, 2, 'body should contain 2 uploads')
-        let partsRead = 0
-        parts.forEach(part => {
-          part.stream.pipe(concat(data => {
-            partsRead++
-            if (part.name === 'sourceMap') {
-              t.equal(part.mimetype, 'application/json')
-              try {
-                t.ok(JSON.parse(data), 'sourceMap should be valid json')
-              } catch (e) {
-                end(e)
-              }
-            }
-            if (part.name === 'minifiedFile') {
-              t.equal(part.mimetype, 'application/javascript')
-              t.ok(data.length, 'js bundle should have length')
-            }
-            if (partsRead === 2) end()
-          }))
-        })
+        t.equal(fields.apiKey[0], 'YOUR_API_KEY', 'body should contain api key')
+        t.equal(fields.minifiedUrl[0], 'https://foobar.com/js/bundle.js', 'body should contain minified url')
+        t.equal(Object.keys(parts).length, 2, 'body should contain 2 uploads')
+        validateParts(parts, t, end)
         res.end('OK')
       }))
     })
