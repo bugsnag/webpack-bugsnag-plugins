@@ -10,6 +10,9 @@ import fs from 'fs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
+// The openssl-legacy-provider is required for webpack4 - see https://github.com/webpack/webpack/issues/14532
+const generateEnv = (server, other = {}) => Object.assign({}, process.env, { PORT: server.address().port, NODE_OPTIONS: '--openssl-legacy-provider' }, other)
+
 const validateParts = (parts, t, end) => {
   const data = fs.readFileSync(parts.sourceMap[0].filepath)
   t.equal(parts.sourceMap[0].mimetype, 'application/json')
@@ -62,10 +65,13 @@ test('it sends upon successful build (example project #1)', t => {
   })
   server.listen()
   exec(join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
-    env: Object.assign({}, process.env, { PORT: server.address().port }),
+    env: generateEnv(server),
     cwd: join(__dirname, 'fixtures', 'd')
   }, (err, stdout, stderr) => {
-    if (err) end(err)
+    if (err) {
+      console.info(err, '\n\n\n', stdout, '\n\n\n', stderr)
+      end(err)
+    }
   })
 })
 
@@ -92,10 +98,13 @@ test('it sends upon successful build (example project #2)', t => {
   })
   server.listen()
   exec(join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
-    env: Object.assign({}, process.env, { PORT: server.address().port }),
+    env: generateEnv(server),
     cwd: join(__dirname, 'fixtures', 'c')
-  }, err => {
-    if (err) end(err)
+  }, (err, stdout, stderr) => {
+    if (err) {
+      console.info(err, '\n\n\n', stdout, '\n\n\n', stderr)
+      end(err)
+    }
   })
 })
 
@@ -123,10 +132,13 @@ if (process.env.WEBPACK_VERSION !== '3') {
     })
     server.listen()
     exec(join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
-      env: Object.assign({}, process.env, { PORT: server.address().port }),
+      env: generateEnv(server),
       cwd: join(__dirname, 'fixtures', 'f')
-    }, err => {
-      if (err) end(err)
+    }, (err, stdout, stderr) => {
+      if (err) {
+        console.info(err, '\n\n\n', stdout, '\n\n\n', stderr)
+        end(err)
+      }
     })
 
     test('it ignores source maps for css files by default', t => {
@@ -167,10 +179,13 @@ if (process.env.WEBPACK_VERSION !== '3') {
       })
       server.listen()
       exec(join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
-        env: Object.assign({}, process.env, { PORT: server.address().port }),
+        env: generateEnv(server),
         cwd: join(__dirname, 'fixtures', 'e')
-      }, (err) => {
-        if (err) end(err)
+      }, (err, stdout, stderr) => {
+        if (err) {
+          console.info(err, '\n\n\n', stdout, '\n\n\n', stderr)
+          end(err)
+        }
       })
     })
   })
@@ -217,10 +232,13 @@ if (process.env.WEBPACK_VERSION !== '3') {
     })
     server.listen()
     exec(join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
-      env: Object.assign({}, process.env, { PORT: server.address().port, IGNORED_EXTENSIONS: '.php,.exe' }),
+      env: generateEnv(server, { IGNORED_EXTENSIONS: '.php,.exe' }),
       cwd: join(__dirname, 'fixtures', 'e')
-    }, (err) => {
-      if (err) end(err)
+    }, (err, stdout, stderr) => {
+      if (err) {
+        console.info(err, '\n\n\n', stdout, '\n\n\n', stderr)
+        end(err)
+      }
     })
   })
 
@@ -247,10 +265,13 @@ if (process.env.WEBPACK_VERSION !== '3') {
     })
     server.listen()
     exec(join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
-      env: Object.assign({}, process.env, { PORT: server.address().port }),
+      env: generateEnv(server),
       cwd: join(__dirname, 'fixtures', 'g')
-    }, err => {
-      if (err) end(err)
+    }, (err, stdout, stderr) => {
+      if (err) {
+        console.info(err, '\n\n\n', stdout, '\n\n\n', stderr)
+        end(err)
+      }
     })
   })
 }

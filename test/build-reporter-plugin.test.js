@@ -7,6 +7,9 @@ import { fileURLToPath } from 'url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
+// The openssl-legacy-provider is required for webpack4 - see https://github.com/webpack/webpack/issues/14532
+const generateEnv = (server) => Object.assign({}, process.env, { PORT: server.address().port, NODE_OPTIONS: '--openssl-legacy-provider' })
+
 test('BugsnagBuildReporterPlugin', t => {
   const p = new Plugin()
   t.equal(p.options.logLevel, 'warn', 'default logLevel should be "warn"')
@@ -35,9 +38,10 @@ test('it sends upon successful build', t => {
   })
   server.listen()
   exec(join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
-    env: Object.assign({}, process.env, { PORT: server.address().port }),
+    env: generateEnv(server),
     cwd: join(__dirname, 'fixtures', 'a')
-  }, (err, stdout) => {
+  }, (err, stdout, stderr) => {
+    if (err) { console.info(err, '\n\n\n', stdout, '\n\n\n', stderr) }
     server.close()
     if (err) return t.fail(err.message)
     t.end()
@@ -55,7 +59,7 @@ test('it doesn’t send upon unsuccessful build', t => {
   })
   server.listen()
   exec(join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
-    env: Object.assign({}, process.env, { PORT: server.address().port }),
+    env: generateEnv(server),
     cwd: join(__dirname, 'fixtures', 'b')
   }, (err, stdout, stderr) => {
     server.close()

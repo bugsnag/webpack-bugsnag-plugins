@@ -4,7 +4,6 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 
 const config = {
   entry: './src/index.js',
-  devtool: 'source-map',
   plugins: [
     new MiniCssExtractPlugin(),
     new webpack.SourceMapDevToolPlugin({
