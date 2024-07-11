@@ -23,7 +23,7 @@ const config = {
 // As per webpack documentation:
 // "output.futureEmitAssets option will be removed in webpack v5.0.0 and this behaviour will become the new default."
 // so it can safely be omitted for webpack>=5 while still getting a similar result
-if (parseInt(process.env.WEBPACK_VERSION, 10) < 5) {
+if (parseInt(process.env.WEBPACK_VERSION) < 5) {
   config.futureEmitAssets = true;
 }
 

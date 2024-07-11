@@ -1,11 +1,11 @@
 import BugsnagSourceMapUploaderPlugin from '../../../source-map-uploader-plugin.js';
-import { SourceMapDevToolPlugin } from 'webpack';
+import webpack from 'webpack';
 
 const config = {
   entry: './src/index.js',
   devtool: false,
   plugins: [
-    new SourceMapDevToolPlugin({
+    new webpack.SourceMapDevToolPlugin({
       filename: '../tmp/[file].map'
     }),
     new BugsnagSourceMapUploaderPlugin({

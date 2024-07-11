@@ -3,26 +3,23 @@ import Plugin from '../source-map-uploader-plugin.js'
 import { createServer } from 'http'
 import formidable from 'formidable'
 import { exec } from 'child_process'
-import concat from 'concat-stream'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import once from 'once'
+import fs from 'fs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 const validateParts = (parts, t, end) => {
-  parts.sourceMap[0].stream.pipe(concat(data => {
-    t.equal(parts.sourceMap[0], 'application/json')
-    try {
-      t.ok(JSON.parse(data), 'sourceMap should be valid json')
-    } catch (e) {
-      end(e)
-    }
-  }))
-  parts.minifiedFile[0].stream.pipe(concat(data => {
-    t.equal(parts.minifiedFile[0].mimetype, 'application/javascript')
-    t.ok(data.length, 'js bundle should have length')
-  }))
+  const data = fs.readFileSync(parts.sourceMap[0].filepath)
+  t.equal(parts.sourceMap[0].mimetype, 'application/json')
+  try {
+    t.ok(JSON.parse(data), 'sourceMap should be valid json')
+  } catch (e) {
+    end(e)
+  }
+  t.equal(parts.minifiedFile[0].mimetype, 'application/javascript')
+  t.ok(fs.readFileSync(parts.sourceMap[0].filepath).length !== 0, 'js bundle should have size')
 }
 
 test('BugsnagSourceMapUploaderPlugin', t => {
@@ -48,7 +45,7 @@ test('it sends upon successful build (example project #1)', t => {
     t.end()
   }
 
-  t.plan(7)
+  t.plan(8)
   const server = createServer((req, res) => {
     formidable().parse(req, once(function (err, fields, parts) {
       if (err) {
@@ -162,7 +159,7 @@ if (process.env.WEBPACK_VERSION !== '3') {
           requests.push({
             apiKey: fields.apiKey[0],
             minifiedUrl: fields.minifiedUrl[0],
-            parts: parts.map(p => ({ name: p.name, filename: p.filename }))
+            parts: Object.keys(parts).map(name => ({ name, filename: parts[name][0].originalFilename }))
           })
           res.end('OK')
           done()
@@ -211,7 +208,7 @@ if (process.env.WEBPACK_VERSION !== '3') {
         requests.push({
           apiKey: fields.apiKey[0],
           minifiedUrl: fields.minifiedUrl[0],
-          parts: parts.map(p => ({ name: p.name, filename: p.filename }))
+          parts: Object.keys(parts).map(name => ({ name, filename: parts[name][0].originalFilename }))
         })
         res.end('OK')
         if (requests.length < 2) return
