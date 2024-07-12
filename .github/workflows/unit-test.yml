@@ -9,6 +9,9 @@ jobs:
       matrix:
         node: [18, 20, 22]
         webpack: [4, 5]
+      include:
+          - node: 12
+            webpack: 3
     env:
       WEBPACK_VERSION: ${{ matrix.webpack }}
     steps:

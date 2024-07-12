@@ -1,7 +1,7 @@
-import BugsnagSourceMapUploaderPlugin from '../../../source-map-uploader-plugin.js';
-import webpack from 'webpack';
+const BugsnagSourceMapUploaderPlugin = require('../../../').BugsnagSourceMapUploaderPlugin
+const webpack = require('webpack')
 
-const config = {
+module.exports = {
   entry: './src/index.js',
   devtool: false,
   plugins: [
@@ -16,7 +16,4 @@ const config = {
   output: {
     publicPath: '*/dist'
   },
-  mode: "development",
 };
-
-export default config;

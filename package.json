@@ -8,7 +8,7 @@
   ],
   "main": "index.js",
   "scripts": {
-    "test": "standard && tape test/source-map-uploader-plugin.test.js | tap-spec"
+    "test": "standard && tape test/**.test.mjs | tap-spec"
   },
   "repository": {
     "type": "git",
@@ -36,6 +36,5 @@
     "ignore": [
       "test/fixtures/**/*"
     ]
-  },
-  "type": "module"
+  }
 }

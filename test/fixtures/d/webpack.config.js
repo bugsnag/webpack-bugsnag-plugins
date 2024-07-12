@@ -1,10 +1,6 @@
-import BugsnagSourceMapUploaderPlugin from '../../../source-map-uploader-plugin.js'
-import { dirname } from 'path'
-import { fileURLToPath } from 'url'
+const BugsnagSourceMapUploaderPlugin = require('../../../').BugsnagSourceMapUploaderPlugin
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
-
-const config = {
+module.exports = {
   entry: './app.js',
   devtool: 'hidden-source-map',
   output: {
@@ -20,6 +16,4 @@ const config = {
       endpoint: `http://localhost:${process.env.PORT}`
     })
   ]
-};
-
-export default config;
+}

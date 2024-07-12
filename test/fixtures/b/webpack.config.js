@@ -1,11 +1,6 @@
-import BugsnagBuildReporterPlugin from '../../../build-reporter-plugin.js'
-import { dirname } from 'path'
-import { fileURLToPath } from 'url'
+const BugsnagBuildReporterPlugin = require('../../../').BugsnagBuildReporterPlugin
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
-
-
-const config = {
+module.exports = {
   entry: './app.js',
   output: {
     path: __dirname,
@@ -19,6 +14,4 @@ const config = {
       endpoint: `http://localhost:${process.env.PORT}`
     })
   ]
-};
-
-export default config;
+}
