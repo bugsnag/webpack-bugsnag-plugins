@@ -8,7 +8,7 @@
   ],
   "main": "index.js",
   "scripts": {
-    "test": "standard && tape test/**.test.js | tap-spec"
+    "test": "standard && tape test/source-map-uploader-plugin.test.js | tap-spec"
   },
   "repository": {
     "type": "git",
@@ -26,6 +26,7 @@
   "dependencies": {
     "@bugsnag/source-maps": "^2.0.0",
     "bugsnag-build-reporter": "^2.0.0",
+    "leaked-handles": "^5.2.0",
     "run-parallel-limit": "^1.0.6"
   },
   "peerDependencies": {

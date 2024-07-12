@@ -41,8 +41,8 @@ test('it sends upon successful build', t => {
     env: generateEnv(server),
     cwd: join(__dirname, 'fixtures', 'a')
   }, (err, stdout, stderr) => {
-    if (err) { console.info(err, '\n\n\n', stdout, '\n\n\n', stderr) }
     server.close()
+    if (err) { console.info(err, '\n\n\n', stdout, '\n\n\n', stderr) }
     if (err) return t.fail(err.message)
     t.end()
   })
