@@ -16,4 +16,5 @@ module.exports = {
   output: {
     publicPath: '*/dist'
   },
+  mode: 'development',
 };

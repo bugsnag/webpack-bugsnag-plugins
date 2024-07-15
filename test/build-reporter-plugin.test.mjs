@@ -7,8 +7,11 @@ import { fileURLToPath } from 'url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-// The openssl-legacy-provider is required for webpack4 - see https://github.com/webpack/webpack/issues/14532
-const generateEnv = (server) => Object.assign({}, process.env, { PORT: server.address().port, NODE_OPTIONS: '--openssl-legacy-provider' })
+const generateEnv = (server) => {
+  // The openssl-legacy-provider is required for webpack4 in node 18 and up - see https://github.com/webpack/webpack/issues/14532
+  const nodeOptions = (parseInt(process.versions.node.split('.')[0]) >= 18) ? { NODE_OPTIONS: '--openssl-legacy-provider' } : {}
+  return Object.assign({}, process.env, { PORT: server.address().port }, nodeOptions)
+}
 
 test('BugsnagBuildReporterPlugin', t => {
   const p = new Plugin()
