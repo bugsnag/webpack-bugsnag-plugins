@@ -1,8 +1,7 @@
 'use strict'
 
-const { browser } = require('@bugsnag/source-maps')
 const parallel = require('run-parallel-limit')
-const {exec} = require("child_process");
+const { exec } = require('child_process')
 const extname = require('path').extname
 const join = require('path').join
 const webpackVersion = require('webpack').version
@@ -16,7 +15,7 @@ const PUBLIC_PATH_WARN =
   '  In some cases, such as in a Node environment, it is safe to ignore this message.\n'
 
 class BugsnagSourceMapUploaderPlugin {
-  constructor(options) {
+  constructor (options) {
     this.apiKey = options.apiKey
     this.publicPath = options.publicPath
     this.appVersion = options.appVersion
@@ -27,13 +26,13 @@ class BugsnagSourceMapUploaderPlugin {
     this.validate()
   }
 
-  validate() {
+  validate () {
     if (typeof this.apiKey !== 'string' || this.apiKey.length < 1) {
       throw new Error(`${LOG_PREFIX} "apiKey" is required`)
     }
   }
 
-  apply(compiler) {
+  apply (compiler) {
     // considering this is used to check for a version >= 5, it's fine to default to 0.0.0 in case it's not set
     const webpackMajorVersion = parseInt((webpackVersion || '0.0.0').split('.')[0], 10)
 
@@ -93,7 +92,7 @@ class BugsnagSourceMapUploaderPlugin {
       }
 
       const sourceMaps = stats.chunks.map(chunkToSourceMapDescriptors).reduce((accum, ds) => accum.concat(ds), [])
-      parallel(sourceMaps.map(sm => {
+      parallel(sourceMaps.map(sm => cb => {
         logger.info(`${logPrefix}uploading sourcemap for "${sm.url}"`)
         const cmdOpts = this.bugsnagCliUploadOpts(sm, outputPath)
 
@@ -105,7 +104,11 @@ class BugsnagSourceMapUploaderPlugin {
               logger.error(`${stderr}`)
             }
           } else {
-            logger.info(`${stdout}`)
+            stdout
+              .split('\n')
+              .filter(line => line)
+              .map(line => logger.info(`${logPrefix}: ${line}`))
+              .join('\n');
           }
         })
       }), 10, cb)
@@ -134,45 +137,52 @@ class BugsnagSourceMapUploaderPlugin {
     return opts
   }
 
-  bugsnagCliUploadOpts (sm, outputPath) {
+  bugsnagCliUploadOpts(sm, outputPath) {
     const opts = this.getUploadOpts(sm)
-    let cmd = './node_modules/.bin/bugsnag-cli upload js '
 
-    if (opts.apiKey !== undefined) {
-      cmd += `--api-key=${opts.apiKey} `
-    } else {
-      console.error('No API key provided')
-      return
+    // Validate required fields
+    if (!opts.apiKey) {
+      console.error('Error: API key is required but was not provided.')
+      return null
     }
 
-    if (opts.endpoint !== undefined) {
-      cmd += `--upload-api-root-url=${opts.endpoint} `
+    if (!outputPath) {
+      console.error('Error: Output path is required.')
+      return null
     }
 
-    if (opts.bundleUrl !== undefined) {
-      cmd += `--bundle-url=${opts.bundleUrl} `
+    // Command base
+    const cmdParts = ['./node_modules/.bin/bugsnag-cli', 'upload', 'js']
+
+    // Mandatory options
+    cmdParts.push(`--api-key=${opts.apiKey}`)
+
+    // Optional options
+    const optionalParams = {
+      '--upload-api-root-url': opts.endpoint,
+      '--bundle-url': opts.bundleUrl,
+      '--version-name': opts.appVersion,
+      '--source-map': opts.sourceMap,
+      '--bundle': opts.bundle
     }
 
-    if (opts.appVersion !== undefined) {
-      cmd += `--version-name=${opts.appVersion} `
+    for (const [flag, value] of Object.entries(optionalParams)) {
+      if (value !== undefined) {
+        cmdParts.push(`${flag}=${value}`)
+      }
     }
 
-    if (opts.sourceMap !== undefined) {
-      cmd += `--source-map=${opts.sourceMap} `
+    // Boolean flags
+    if (opts.overwrite) {
+      cmdParts.push('--overwrite')
     }
 
-    if (opts.bundle !== undefined) {
-      cmd += `--bundle=${opts.bundle} `
-    }
+    // Add current working directory and output path
+    cmdParts.push(`--project-root=${process.cwd()}`)
+    cmdParts.push(outputPath)
 
-    if (opts.overwrite !== undefined) {
-      cmd += '--overwrite '
-    }
-
-    // current working dir
-    cmd += `--project-root=${process.cwd()} `
-    cmd += outputPath
-    return cmd
+    // Join the command parts into a single string
+    return cmdParts.join(' ')
   }
 }
 module.exports = BugsnagSourceMapUploaderPlugin
