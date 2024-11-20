@@ -97,7 +97,6 @@ class BugsnagSourceMapUploaderPlugin {
         logger.info(`${logPrefix}uploading sourcemap for "${sm.url}"`)
         const cmdOpts = this.bugsnagCliUploadOpts(sm, outputPath)
 
-        const { exec } = require('child_process')
         exec(cmdOpts, (err, stdout, stderr) => {
           if (err) {
             logger.error(`${logPrefix}error uploading sourcemap for "${sm.url}"`)
