@@ -102,14 +102,17 @@ class BugsnagSourceMapUploaderPlugin {
             logger.error(`${stdout}`)
             if (stderr) {
               logger.error(`${stderr}`)
+              cb(err)
             }
           } else {
             stdout
               .split('\n')
               .filter(line => line)
               .map(line => logger.info(`${logPrefix}: ${line}`))
-              .join('\n');
+              .join('\n')
           }
+
+          cb()
         })
       }), 10, cb)
     }
@@ -137,7 +140,7 @@ class BugsnagSourceMapUploaderPlugin {
     return opts
   }
 
-  bugsnagCliUploadOpts(sm, outputPath) {
+  bugsnagCliUploadOpts (sm, outputPath) {
     const opts = this.getUploadOpts(sm)
 
     // Validate required fields
