@@ -2,6 +2,7 @@
 
 const { browser } = require('@bugsnag/source-maps')
 const parallel = require('run-parallel-limit')
+const {exec} = require("child_process");
 const extname = require('path').extname
 const join = require('path').join
 const webpackVersion = require('webpack').version
@@ -15,7 +16,7 @@ const PUBLIC_PATH_WARN =
   '  In some cases, such as in a Node environment, it is safe to ignore this message.\n'
 
 class BugsnagSourceMapUploaderPlugin {
-  constructor (options) {
+  constructor(options) {
     this.apiKey = options.apiKey
     this.publicPath = options.publicPath
     this.appVersion = options.appVersion
@@ -26,13 +27,13 @@ class BugsnagSourceMapUploaderPlugin {
     this.validate()
   }
 
-  validate () {
+  validate() {
     if (typeof this.apiKey !== 'string' || this.apiKey.length < 1) {
       throw new Error(`${LOG_PREFIX} "apiKey" is required`)
     }
   }
 
-  apply (compiler) {
+  apply(compiler) {
     // considering this is used to check for a version >= 5, it's fine to default to 0.0.0 in case it's not set
     const webpackMajorVersion = parseInt((webpackVersion || '0.0.0').split('.')[0], 10)
 
@@ -92,9 +93,22 @@ class BugsnagSourceMapUploaderPlugin {
       }
 
       const sourceMaps = stats.chunks.map(chunkToSourceMapDescriptors).reduce((accum, ds) => accum.concat(ds), [])
-      parallel(sourceMaps.map(sm => cb => {
+      parallel(sourceMaps.map(sm => {
         logger.info(`${logPrefix}uploading sourcemap for "${sm.url}"`)
-        browser.uploadOne(this.getUploadOpts(sm)).then(cb, cb)
+        const cmdOpts = this.bugsnagCliUploadOpts(sm, outputPath)
+
+        const { exec } = require('child_process')
+        exec(cmdOpts, (err, stdout, stderr) => {
+          if (err) {
+            logger.error(`${logPrefix}error uploading sourcemap for "${sm.url}"`)
+            logger.error(`${stdout}`)
+            if (stderr) {
+              logger.error(`${stderr}`)
+            }
+          } else {
+            logger.info(`${stdout}`)
+          }
+        })
       }), 10, cb)
     }
 
@@ -120,8 +134,48 @@ class BugsnagSourceMapUploaderPlugin {
     if (this.overwrite) opts.overwrite = this.overwrite
     return opts
   }
-}
 
+  bugsnagCliUploadOpts (sm, outputPath) {
+    const opts = this.getUploadOpts(sm)
+    let cmd = './node_modules/.bin/bugsnag-cli upload js '
+
+    if (opts.apiKey !== undefined) {
+      cmd += `--api-key=${opts.apiKey} `
+    } else {
+      console.error('No API key provided')
+      return
+    }
+
+    if (opts.endpoint !== undefined) {
+      cmd += `--upload-api-root-url=${opts.endpoint} `
+    }
+
+    if (opts.bundleUrl !== undefined) {
+      cmd += `--bundle-url=${opts.bundleUrl} `
+    }
+
+    if (opts.appVersion !== undefined) {
+      cmd += `--version-name=${opts.appVersion} `
+    }
+
+    if (opts.sourceMap !== undefined) {
+      cmd += `--source-map=${opts.sourceMap} `
+    }
+
+    if (opts.bundle !== undefined) {
+      cmd += `--bundle=${opts.bundle} `
+    }
+
+    if (opts.overwrite !== undefined) {
+      cmd += '--overwrite '
+    }
+
+    // current working dir
+    cmd += `--project-root=${process.cwd()} `
+    cmd += outputPath
+    return cmd
+  }
+}
 module.exports = BugsnagSourceMapUploaderPlugin
 
 // removes a querystring from a file path
