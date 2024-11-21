@@ -21,7 +21,7 @@ jobs:
       - run: node -e "console.log(require('os').type())"
       - run: node -e "console.log(require('os').arch())"
       - run: npm install
-      - run: ls -lah node_modules/
+      - run: ls -lah node_modules/.bin/
       - run: bin/ci-install.sh
       - run: npm test
 
