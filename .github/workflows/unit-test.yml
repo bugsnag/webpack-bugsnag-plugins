@@ -17,6 +17,7 @@ jobs:
           node-version: ${{ matrix.node }}
       - name: Checkout PR branch
         uses: actions/checkout@v1
+      - run: uname -a
       - run: npm install
       - run: bin/ci-install.sh
       - run: npm test
