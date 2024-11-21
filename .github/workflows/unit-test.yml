@@ -22,6 +22,7 @@ jobs:
       - run: node -e "console.log(require('os').arch())"
       - run: npm install
       - run: bin/ci-install.sh
+      - run: ./node_modules/.bin/bugsnag-cli --version
       - run: ls -lah node_modules/.bin/
       - run: npm test
 
