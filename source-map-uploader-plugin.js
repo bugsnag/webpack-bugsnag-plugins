@@ -156,7 +156,7 @@ class BugsnagSourceMapUploaderPlugin {
     }
 
     // Command base
-    const cmdParts = ['./node_modules/.bin/bugsnag-cli', 'upload', 'js']
+    const cmdParts = ['npx', 'bugsnag-cli', 'upload', 'js']
 
     // Mandatory options
     cmdParts.push(`--api-key=${opts.apiKey}`)
@@ -167,7 +167,8 @@ class BugsnagSourceMapUploaderPlugin {
       '--bundle-url': opts.bundleUrl,
       '--version-name': opts.appVersion,
       '--source-map': opts.sourceMap,
-      '--bundle': opts.bundle
+      '--bundle': opts.bundle,
+      '--code-bundle-id': opts.codeBundleId
     }
 
     for (const [flag, value] of Object.entries(optionalParams)) {
