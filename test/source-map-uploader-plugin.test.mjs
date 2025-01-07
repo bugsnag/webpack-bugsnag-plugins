@@ -18,13 +18,13 @@ const generateEnv = (server, other = {}) => {
 
 const validateParts = (parts, t, end) => {
   const data = fs.readFileSync(parts.sourceMap[0].filepath)
-  t.equal(parts.sourceMap[0].mimetype, 'application/json')
+  t.equal(parts.sourceMap[0].mimetype, 'application/octet-stream')
   try {
     t.ok(JSON.parse(data), 'sourceMap should be valid json')
   } catch (e) {
     end(e)
   }
-  t.equal(parts.minifiedFile[0].mimetype, 'application/javascript')
+  t.equal(parts.minifiedFile[0].mimetype, 'application/octet-stream')
   t.ok(fs.readFileSync(parts.sourceMap[0].filepath).length !== 0, 'js bundle should have size')
 }
 
