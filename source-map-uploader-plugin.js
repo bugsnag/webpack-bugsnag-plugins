@@ -1,7 +1,6 @@
 'use strict'
 
 const parallel = require('run-parallel-limit')
-const { exec } = require('child_process')
 const extname = require('path').extname
 const join = require('path').join
 const webpackVersion = require('webpack').version
@@ -93,7 +92,7 @@ class BugsnagSourceMapUploaderPlugin {
       }
 
       const sourceMaps = stats.chunks.map(chunkToSourceMapDescriptors).reduce((accum, ds) => accum.concat(ds), [])
-      parallel(sourceMaps.map(sm => cb => {gi
+      parallel(sourceMaps.map(sm => cb => {
         const cmdOpts = this.bugsnagCliUploadOpts(sm)
         logger.info(`${logPrefix}uploading sourcemap for "${sm.url}" using the bugsnag-cli`)
         for (const [key, value] of Object.entries(cmdOpts)) {
