@@ -25,7 +25,7 @@
     "tape": "^5.0.1"
   },
   "dependencies": {
-    "@bugsnag/cli": "^2.6.2",
+    "@bugsnag/cli": "^2.9.0",
     "bugsnag-build-reporter": "^2.0.0",
     "run-parallel-limit": "^1.0.6"
   },

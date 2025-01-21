@@ -5,6 +5,7 @@ const { exec } = require('child_process')
 const extname = require('path').extname
 const join = require('path').join
 const webpackVersion = require('webpack').version
+const BugsnagCLI = require('@bugsnag/cli')
 
 const LOG_PREFIX = '[BugsnagSourceMapUploaderPlugin]'
 const PUBLIC_PATH_WARN =
@@ -92,29 +93,25 @@ class BugsnagSourceMapUploaderPlugin {
       }
 
       const sourceMaps = stats.chunks.map(chunkToSourceMapDescriptors).reduce((accum, ds) => accum.concat(ds), [])
-      parallel(sourceMaps.map(sm => cb => {
-        const cmdOpts = this.bugsnagCliUploadOpts(sm, outputPath)
+      parallel(sourceMaps.map(sm => cb => {gi
+        const cmdOpts = this.bugsnagCliUploadOpts(sm)
         logger.info(`${logPrefix}uploading sourcemap for "${sm.url}" using the bugsnag-cli`)
-        logger.debug(`${cmdOpts}`)
-
-        exec(cmdOpts, (err, stdout, stderr) => {
-          if (err) {
-            logger.error(`${logPrefix}error uploading sourcemap for "${sm.url}"`)
-            logger.error(`${stdout}`)
-            if (stderr) {
-              logger.error(`${stderr}`)
-              cb(err)
-            }
-          } else {
-            stdout
-              .split('\n')
-              .filter(line => line)
-              .map(line => logger.debug(`${logPrefix}: ${line}`))
-              .join('\n')
-          }
-
-          cb()
-        })
+        for (const [key, value] of Object.entries(cmdOpts)) {
+          logger.debug(`${logPrefix}${key}: ${value}`)
+        }
+        BugsnagCLI.Upload.Js(cmdOpts, outputPath)
+          .then((output) => {
+            // Split output by lines, prefix each line, and log them
+            output.split('\n').forEach((line) => {
+              logger.info(`${logPrefix}${line}`)
+            })
+          })
+          .catch((error) => {
+            // Split error by lines, prefix each line, and log them
+            error.toString().split('\n').forEach((line) => {
+              logger.error(`${logPrefix}${line}`)
+            })
+          })
       }), 10, cb)
     }
 
@@ -141,7 +138,7 @@ class BugsnagSourceMapUploaderPlugin {
     return opts
   }
 
-  bugsnagCliUploadOpts (sm, outputPath) {
+  bugsnagCliUploadOpts (sm) {
     const opts = this.getUploadOpts(sm)
 
     // Validate required fields
@@ -150,44 +147,34 @@ class BugsnagSourceMapUploaderPlugin {
       return null
     }
 
-    if (!outputPath) {
-      console.error('Error: Output path is required.')
-      return null
-    }
-
     // Command base
-    const cmdParts = ['npx', 'bugsnag-cli', 'upload', 'js']
-
-    // Mandatory options
-    cmdParts.push(`--api-key=${opts.apiKey}`)
+    const cmdOpts = {
+      apiKey: opts.apiKey,
+      projectRoot: process.cwd()
+    }
 
     // Optional options
     const optionalParams = {
-      '--upload-api-root-url': opts.endpoint,
-      '--bundle-url': opts.bundleUrl,
-      '--version-name': opts.appVersion,
-      '--source-map': opts.sourceMap,
-      '--bundle': opts.bundle,
-      '--code-bundle-id': opts.codeBundleId
+      uploadApiRootUrl: opts.endpoint,
+      bundleUrl: opts.bundleUrl,
+      versionName: opts.appVersion,
+      sourceMap: opts.sourceMap,
+      bundle: opts.bundle,
+      codeBundleId: opts.codeBundleId
     }
 
-    for (const [flag, value] of Object.entries(optionalParams)) {
+    for (const [key, value] of Object.entries(optionalParams)) {
       if (value !== undefined) {
-        cmdParts.push(`${flag}=${value}`)
+        cmdOpts[key] = value
       }
     }
 
     // Boolean flags
     if (opts.overwrite) {
-      cmdParts.push('--overwrite')
+      cmdOpts.overwrite = true
     }
 
-    // Add current working directory and output path
-    cmdParts.push(`--project-root=${process.cwd()}`)
-    cmdParts.push(outputPath)
-
-    // Join the command parts into a single string
-    return cmdParts.join(' ')
+    return cmdOpts
   }
 }
 module.exports = BugsnagSourceMapUploaderPlugin
