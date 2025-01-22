@@ -19,7 +19,5 @@ jobs:
         uses: actions/checkout@v1
       - run: npm install
       - run: bin/ci-install.sh
-      - run: npm install @bugsnag/cli
-      - run: ./node_modules/.bin/bugsnag-cli --version
       - run: npm test
 
