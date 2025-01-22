@@ -163,8 +163,8 @@ if (process.env.WEBPACK_VERSION !== '3') {
 
       const done = () => {
         t.equal(requests[0].minifiedUrl, '*/dist/main.js')
-        t.match(requests[0].parts[0].filename, /main\.js\.map$/)
         t.match(requests[0].parts[1].filename, /main\.js$/)
+        t.match(requests[0].parts[0].filename, /main\.js\.map$/)
         end()
       }
 
@@ -212,11 +212,11 @@ if (process.env.WEBPACK_VERSION !== '3') {
     const done = () => {
       requests.sort((a, b) => a.minifiedUrl < b.minifiedUrl ? -1 : 1)
       t.equal(requests[0].minifiedUrl, '*/dist/main.css')
+      t.match(requests[0].parts[0].filename, /main\.css/)
       t.match(requests[0].parts[0].filename, /main\.css\.map/)
-      t.match(requests[0].parts[1].filename, /main\.css/)
       t.equal(requests[1].minifiedUrl, '*/dist/main.js')
+      t.match(requests[1].parts[0].filename, /main\.js/)
       t.match(requests[1].parts[0].filename, /main\.js\.map/)
-      t.match(requests[1].parts[1].filename, /main\.js/)
       end()
     }
 
