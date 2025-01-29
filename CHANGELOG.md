@@ -1,83 +1,94 @@
 # Changelog
 
-## 1.8.0 (2021-07-07)
+## [1.8.0] - 2021-07-07
 
 - Use webpack for logging (#55)
 - Upgrade build reporter to latest version (#57)
 
-## 1.7.0 (2021-05-18)
+## [1.7.0] - 2021-05-18
 
 - Update to v2 of @bugsnag/source-maps (#53)
 
-## 1.6.0 (2020-12-17)
+## [1.6.0] - 2020-12-17
 
 - Add support for Webpack 5 (credit @chadrien) (#49)
 
-## 1.5.0 (2020-12-10)
+## [1.5.0] - 2020-12-10
 
 - Upgrade to new @bugsnag/source-maps library (#48)
 
-## 1.4.5 (2020-01-28)
+## [1.4.5] - 2020-01-28
 
 - Allow setting of `codeBundleId` on `BugsnagSourceMapUploaderPlugin` (#40, fixes #38)
 
-## 1.4.2 (2019-09-10)
+## [1.4.2] - 2019-09-10
 
 ### Changed
+
 - Allow `publicPath` to be an empty string (supports targeting Node and using the top level project directory for the output) (#39)
 
-## 1.4.1 (2019-08-12)
+## [1.4.1] - 2019-08-12
 
 ### Fixed
+
 - Manually join paths rather than using `url.resolve()` as that doesn't work with the (\*) wildcard character (#37, fixes #35)
 
-## 1.4.0 (2019-03-13)
+## [1.4.0] - 2019-03-13
 
 ### Changed
+
 - Switch to manually calculating full paths on disk, preparing for the removal of `existsAt` in Webpack v5. This fixes a bug when `output.futureEmitAssets` is enabled in Webpack v4.29 (#29, fixes #28)
 
-## 1.3.0 (2019-01-21)
+## [1.3.0] - 2019-01-21
 
 ### Added
+
 - Add a list of ignored bundle exceptions (defaults to `[ '.css' ]`, preventing CSS bundles and source maps from unnecessarily being uploaded) (#26, fixes #24)
 
 ### Changed
+
 - Improve bundle source file lookup (when bundles are output to a different directory than their source maps) (#27, fixes #20)
 
-## 1.2.4 (2018-12-14)
+## [1.2.4] - 2018-12-14
 
 ### Fixed
+
 - Handle missing asset when source map is not written to disk (#23, fixes #18)
 
-## 1.2.3 (2018-12-04)
+## [1.2.3] - 2018-12-04
 
 ### Added
+
 - Retry on failed requests (via dependency bump) (#21)
 
-## 1.2.2 (2018-06-27)
+## [1.2.2] - 2018-06-27
 
 ### Added
+
 - Support multiple maps per chunk (#14)
 
-## 1.2.1 (2018-06-25)
+## [1.2.1] - 2018-06-25
 
 ### Fixed
+
 - Tolerate leading slashes in chunk names (supports use with laravel-mix) (#12)
 
-## 1.2.0 (2018-06-15)
+## [1.2.0] - 2018-06-15
 
 This version uses feature detection to decide which Webpack APIs to use, making this change backwards compatible with Webpack v3.
 
-## 1.1.1 (2018-03-15)
+## [1.1.1] - 2018-03-15
 
 ### Fixed
+
 - fix(source-map-uploader): Only find corresponding source if a map file was found (#4)
 
-## 1.1.0 (2018-02-21)
+## [1.1.0] - 2018-02-21
 
 ### Added
+
 - Added `BugsnagSourceMapUploaderPlugin` (#1)
 
-## 1.0.0 (2018-01-15)
+## [1.0.0] - 2018-01-15
 
 Initial release 🚀
