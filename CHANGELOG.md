@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- handle parent directory references in source paths (#85)
+
 ## [1.8.0] - 2021-07-07
 
 - Use webpack for logging (#55)
