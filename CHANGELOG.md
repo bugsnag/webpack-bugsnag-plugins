@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## [1.9.0] - 2025-02-24
 
 - handle parent directory references in source paths (#85)
 
