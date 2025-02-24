@@ -79,14 +79,19 @@ class BugsnagSourceMapUploaderPlugin {
             return null
           }
 
+          let url = '' +
+            // ensure publicPath has a trailing slash
+            publicPath.replace(/[^/]$/, '$&/') +
+            // remove leading / or ./ from source
+            source.replace(/^\.?\//, '')
+
+          // replace parent directory references with empty string
+          url = url.replace(/\.\.\//g, '')
+
           return {
             source: outputChunkLocation,
             map: outputSourceMapLocation,
-            url: '' +
-              // ensure publicPath has a trailing slash
-              publicPath.replace(/[^/]$/, '$&/') +
-              // remove leading / or ./ from source
-              source.replace(/^\.?\//, '')
+            url: url
           }
         }).filter(Boolean)
       }

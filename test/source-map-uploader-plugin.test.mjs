@@ -147,6 +147,40 @@ if (process.env.WEBPACK_VERSION !== '3') {
       }
     })
 
+    test('it removes any "../" from chunk paths', t => {
+      const end = err => {
+        server.close()
+        if (err) return t.fail(err.message)
+        t.end()
+      }
+
+      t.plan(7)
+      const server = createServer((req, res) => {
+        formidable().parse(req, once(function (err, fields, parts) {
+          if (err) {
+            res.end('ERR')
+            return end(err)
+          }
+          t.equal(fields.apiKey[0], 'YOUR_API_KEY', 'body should contain api key')
+          t.equal(fields.minifiedUrl[0], 'https://foobar.com/js/static/chunks/main.js', 'body should contain minified url')
+          t.equal(Object.keys(parts).length, 2, 'body should contain 2 uploads')
+          validateParts(parts, t, end)
+          res.end('OK')
+          end()
+        }))
+      })
+      server.listen()
+      exec(join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
+        env: generateEnv(server),
+        cwd: join(__dirname, 'fixtures', 'h')
+      }, (err, stdout, stderr) => {
+        if (err) {
+          console.info(err, '\n\n\n', stdout, '\n\n\n', stderr)
+          end(err)
+        }
+      })
+    })
+
     test('it ignores source maps for css files by default', t => {
       t.plan(7)
       t.plan(3)
