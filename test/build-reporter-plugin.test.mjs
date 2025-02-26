@@ -1,10 +1,17 @@
-'use strict'
+import test from 'tape'
+import Plugin from '../build-reporter-plugin.js'
+import { createServer } from 'http'
+import { exec } from 'child_process'
+import { join, dirname } from 'path'
+import { fileURLToPath } from 'url'
 
-const test = require('tape')
-const Plugin = require('../build-reporter-plugin')
-const http = require('http')
-const exec = require('child_process').exec
-const path = require('path')
+const __dirname = dirname(fileURLToPath(import.meta.url))
+
+const generateEnv = (server) => {
+  // The openssl-legacy-provider is required for webpack4 in node 18 and up - see https://github.com/webpack/webpack/issues/14532
+  const nodeOptions = (parseInt(process.versions.node.split('.')[0]) >= 18) ? { NODE_OPTIONS: '--openssl-legacy-provider' } : {}
+  return Object.assign({}, process.env, { PORT: server.address().port }, nodeOptions)
+}
 
 test('BugsnagBuildReporterPlugin', t => {
   const p = new Plugin()
@@ -15,7 +22,7 @@ test('BugsnagBuildReporterPlugin', t => {
 
 test('it sends upon successful build', t => {
   t.plan(3)
-  const server = http.createServer((req, res) => {
+  const server = createServer((req, res) => {
     let body = ''
     req.on('data', (d) => { body += d })
     req.on('end', () => {
@@ -33,11 +40,12 @@ test('it sends upon successful build', t => {
     })
   })
   server.listen()
-  exec(path.join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
-    env: Object.assign({}, process.env, { PORT: server.address().port }),
-    cwd: path.join(__dirname, 'fixtures', 'a')
-  }, (err, stdout) => {
+  exec(join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
+    env: generateEnv(server),
+    cwd: join(__dirname, 'fixtures', 'a')
+  }, (err, stdout, stderr) => {
     server.close()
+    if (err) { console.info(err, '\n\n\n', stdout, '\n\n\n', stderr) }
     if (err) return t.fail(err.message)
     t.end()
   })
@@ -45,7 +53,7 @@ test('it sends upon successful build', t => {
 
 test('it doesn’t send upon unsuccessful build', t => {
   t.plan(1)
-  const server = http.createServer((req, res) => {
+  const server = createServer((req, res) => {
     req.on('data', (d) => {})
     req.on('end', () => {
       t.fail('no requests should hit the server')
@@ -53,9 +61,9 @@ test('it doesn’t send upon unsuccessful build', t => {
     })
   })
   server.listen()
-  exec(path.join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
-    env: Object.assign({}, process.env, { PORT: server.address().port }),
-    cwd: path.join(__dirname, 'fixtures', 'b')
+  exec(join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
+    env: generateEnv(server),
+    cwd: join(__dirname, 'fixtures', 'b')
   }, (err, stdout, stderr) => {
     server.close()
     t.ok(err)

@@ -31,6 +31,7 @@ This plugin hooks into the `'after-emit'` event once all output files have been 
     - `revision: string` the unique identifier for the commit (e.g. git SHA)
   - `builderName: string` the name of the person/machine that created this build (defaults to the result of the `whoami` command)
   - `autoAssignRelease: boolean` automatically associate this build with any new error events and sessions that are received for the `releaseStage` until a subsequent build notification is received. If this is set to `true` and no `releaseStage` is provided the build will be applied to `'production'`.
+  - `metadata: object` an object describing key/value pairs containing any custom build information that provides useful metadata about the build. e.g. build configuration parameters, versions of dependencies, reason for the build etc.
 - `opts`
   - `logLevel: string` the minimum severity of log to output (`'debug'`, `'info'`, `'warn'`, `'error'`), default `'warn'`
   - `logger: object` provide a different logger object `{ debug, info, warn, error }`
