@@ -90,6 +90,7 @@ class BugsnagSourceMapUploaderPlugin {
           let url = this.minifiedUrl || (publicPath.replace(/[^/]$/, '$&/') + source.replace(/^\.\//, ''))
           // Check if this.minifyBundleUrls is set to true
           if (this.minifyBundleUrls) {
+            // replace hash in url with wildcard
             url = url.replace(/\.[a-f0-9]{8,}\./, '.*.')
           }
 
