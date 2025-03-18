@@ -23,6 +23,8 @@ class BugsnagSourceMapUploaderPlugin {
     this.overwrite = options.overwrite
     this.endpoint = options.endpoint
     this.ignoredBundleExtensions = options.ignoredBundleExtensions || ['.css']
+    this.minifiedUrl = options.minifiedUrl
+    this.minifyBundleUrls = options.minifyBundleUrls
     this.validate()
   }
 
@@ -79,11 +81,17 @@ class BugsnagSourceMapUploaderPlugin {
             return null
           }
 
-          let url = '' +
-            // ensure publicPath has a trailing slash
-            publicPath.replace(/[^/]$/, '$&/') +
-            // remove leading / or ./ from source
-            source.replace(/^\.?\//, '')
+          // let url = '' +
+          //     // ensure publicPath has a trailing slash
+          //     publicPath.replace(/[^/]$/, '$&/') +
+          //     // remove leading / or ./ from source
+          //     source.replace(/^\.?\//, '')
+
+          let url = this.minifiedUrl || (publicPath.replace(/[^/]$/, '$&/') + source.replace(/^\.\//, ''))
+          // Check if this.minifyBundleUrls is set to true
+          if (this.minifyBundleUrls) {
+            url = url.replace(/\.[a-f0-9]{8,}\./, '.*.')
+          }
 
           // replace parent directory references with empty string
           url = url.replace(/\.\.\//g, '')
@@ -139,6 +147,7 @@ class BugsnagSourceMapUploaderPlugin {
     }
     if (this.endpoint) opts.endpoint = this.endpoint
     if (this.overwrite) opts.overwrite = this.overwrite
+
     return opts
   }
 
