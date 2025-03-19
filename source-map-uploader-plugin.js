@@ -81,12 +81,6 @@ class BugsnagSourceMapUploaderPlugin {
             return null
           }
 
-          // let url = '' +
-          //     // ensure publicPath has a trailing slash
-          //     publicPath.replace(/[^/]$/, '$&/') +
-          //     // remove leading / or ./ from source
-          //     source.replace(/^\.?\//, '')
-
           let url = this.minifiedUrl || (publicPath.replace(/[^/]$/, '$&/') + source.replace(/^\.\//, ''))
           // Check if this.minifyBundleUrls is set to true
           if (this.minifyBundleUrls) {
