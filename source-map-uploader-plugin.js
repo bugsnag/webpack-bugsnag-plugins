@@ -20,11 +20,11 @@ class BugsnagSourceMapUploaderPlugin {
     this.publicPath = options.publicPath
     this.appVersion = options.appVersion
     this.codeBundleId = options.codeBundleId
+    this.bundle = options.bundle
+    this.bundleUrl = options.bundleUrl
     this.overwrite = options.overwrite
     this.endpoint = options.endpoint
     this.ignoredBundleExtensions = options.ignoredBundleExtensions || ['.css']
-    this.minifiedUrl = options.minifiedUrl
-    this.minifyBundleUrls = options.minifyBundleUrls
     this.validate()
   }
 
@@ -46,16 +46,17 @@ class BugsnagSourceMapUploaderPlugin {
       const logger = compiler.getInfrastructureLogger ? compiler.getInfrastructureLogger('BugsnagSourceMapUploaderPlugin') : console
       const logPrefix = compiler.getInfrastructureLogger ? '' : `${LOG_PREFIX} `
 
-      const chunkToSourceMapDescriptors = chunk => {
-        // find .map files in this chunk
-        const maps = chunk[webpackMajorVersion >= 5 ? 'auxiliaryFiles' : 'files'].filter(file => /.+\.map(\?.*)?$/.test(file))
+      const chunkToSourceMapDescriptors = (chunk) => {
+        // Determine which property to use for source maps based on Webpack version
+        const mapFiles = chunk[webpackMajorVersion >= 5 ? 'auxiliaryFiles' : 'files']
+          .filter(file => file.endsWith('.map'))
 
         if (!publicPath) {
           logger.warn(`${logPrefix}${PUBLIC_PATH_WARN}`)
         }
 
-        return maps.map(map => {
-          // for each *.map file, find a corresponding source file in the chunk
+        return mapFiles.map(map => {
+          // Find the corresponding source file for the map
           const source = chunk.files.find(file => map.replace('.map', '').endsWith(file))
 
           if (!source) {
@@ -94,7 +95,9 @@ class BugsnagSourceMapUploaderPlugin {
           return {
             source: outputChunkLocation,
             map: outputSourceMapLocation,
-            url: url
+            url: url,
+            chunkName: chunk.names[0] || 'unknown',
+            hash: chunk.hash || ''
           }
         }).filter(Boolean)
       }
@@ -136,8 +139,8 @@ class BugsnagSourceMapUploaderPlugin {
       apiKey: this.apiKey,
       appVersion: this.appVersion,
       codeBundleId: this.codeBundleId,
-      bundleUrl: sm.url,
-      bundle: sm.source,
+      bundleUrl: this.bundleUrl || sm.url,
+      bundle: this.bundle || sm.source,
       sourceMap: sm.map
     }
     if (this.endpoint) opts.endpoint = this.endpoint
@@ -148,6 +151,12 @@ class BugsnagSourceMapUploaderPlugin {
 
   bugsnagCliUploadOpts (sm) {
     const opts = this.getUploadOpts(sm)
+
+    // If bundleUrl is provided, replace placeholders dynamically
+    if (this.bundleUrl) {
+      opts.bundleUrl = this.bundleUrl
+        .replace(/\[name\]/g, sm.chunkName) // Replace [name] with chunk name
+    }
 
     // Validate required fields
     if (!opts.apiKey) {
