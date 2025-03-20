@@ -22,6 +22,8 @@ class BugsnagSourceMapUploaderPlugin {
     this.codeBundleId = options.codeBundleId
     this.overwrite = options.overwrite
     this.endpoint = options.endpoint
+    this.bundle = options.bundle
+    this.bundleUrl = options.bundleUrl
     this.ignoredBundleExtensions = options.ignoredBundleExtensions || ['.css']
     this.validate()
   }
@@ -133,8 +135,8 @@ class BugsnagSourceMapUploaderPlugin {
       apiKey: this.apiKey,
       appVersion: this.appVersion,
       codeBundleId: this.codeBundleId,
-      bundleUrl: sm.url,
-      bundle: sm.source,
+      bundleUrl: this.bundleUrl || sm.url,
+      bundle: this.bundle || sm.source,
       sourceMap: sm.map
     }
     if (this.endpoint) opts.endpoint = this.endpoint
