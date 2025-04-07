@@ -5,7 +5,7 @@ const BugsnagCLI = require('@bugsnag/cli')
 const LOG_PREFIX = '[BugsnagBuildReporterPlugin]'
 
 class BugsnagBuildReporterPlugin {
-  constructor (options) {
+  constructor (build, options = {}) {
     this.apiKey = options.apiKey
     this.appVersion = options.appVersion
     this.autoAssignRelease = options.autoAssignRelease
@@ -18,13 +18,9 @@ class BugsnagBuildReporterPlugin {
     this.overwrite = options.overwrite
     this.endpoint = options.endpoint
     this.verbose = options.verbose
-    this.logLevel = options.logLevel
-  }
+    this.logLevel = options.logLevel || 'warn'
 
-  validate () {
-    if (typeof this.apiKey !== 'string' || this.apiKey.length < 1) {
-      throw new Error(`${LOG_PREFIX} "apiKey" is required`)
-    }
+    this.build = Object.assign({ buildTool: 'webpack-bugsnag-plugins' }, build)
   }
 
   apply (compiler) {
