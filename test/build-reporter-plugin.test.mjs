@@ -15,7 +15,7 @@ const generateEnv = (server) => {
 
 test('BugsnagBuildReporterPlugin', t => {
   const p = new Plugin({})
-  t.equal(p.logLevel, 'warn', 'default logLevel should be "warn"')
+  t.equal(p.options.logLevel, 'warn', 'default logLevel should be "warn"')
   t.equal(p.build.buildTool, 'webpack-bugsnag-plugins', 'build.buildTool should be set')
   t.end()
 })
