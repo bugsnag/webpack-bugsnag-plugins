@@ -14,7 +14,7 @@ class BugsnagBuildReporterPlugin {
     const plugin = (compilation, cb) => {
       const stats = compilation.getStats()
       if (stats.hasErrors()) return cb(null)
-      const logger = compiler.getInfrastructureLogger ? compiler.getInfrastructureLogger('BugsnagSourceMapUploaderPlugin') : console
+      const logger = compiler.getInfrastructureLogger ? compiler.getInfrastructureLogger('BugsnagBuildReporterPlugin') : console
       const logPrefix = compiler.getInfrastructureLogger ? '' : `${LOG_PREFIX} `
       const cmdopts = this.getBuildOpts(this)
 
