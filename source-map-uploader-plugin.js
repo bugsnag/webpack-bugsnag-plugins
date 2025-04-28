@@ -175,11 +175,6 @@ class BugsnagSourceMapUploaderPlugin {
       }
     }
 
-    // Boolean flags
-    if (opts.overwrite) {
-      cmdOpts.overwrite = true
-    }
-
     return cmdOpts
   }
 }
