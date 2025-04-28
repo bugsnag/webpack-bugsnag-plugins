@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.0.0] - 2025-04-28
+
+- Migrate `@bugsnag/source-maps` to `@bugsnag/cli` (#91)
+- Migrate `@bugsnag/build-reporter` to `@bugsnag/cli` (#91)
+
 ## [1.9.0] - 2025-02-24
 
 - handle parent directory references in source paths (#85)
