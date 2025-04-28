@@ -2,6 +2,8 @@
 
 ## [2.0.0] - 2025-04-28
 
+There are no breaking changes in this release, but it has been marked as a major change due to the significant difference in the underlying tooling. Both source map upload and registering new builds is now done via the `@bugsnag/cli` package.
+
 - Migrate `@bugsnag/source-maps` to `@bugsnag/cli` (#91)
 - Migrate `@bugsnag/build-reporter` to `@bugsnag/cli` (#91)
 
