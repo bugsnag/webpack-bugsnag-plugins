@@ -26,7 +26,6 @@
   },
   "dependencies": {
     "@bugsnag/cli": "^3.0.0",
-    "bugsnag-build-reporter": "^2.0.0",
     "run-parallel-limit": "^1.0.6"
   },
   "peerDependencies": {
