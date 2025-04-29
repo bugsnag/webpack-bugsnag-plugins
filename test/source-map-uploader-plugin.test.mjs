@@ -18,13 +18,13 @@ const generateEnv = (server, other = {}) => {
 
 const validateParts = (parts, t, end) => {
   const data = fs.readFileSync(parts.sourceMap[0].filepath)
-  t.equal(parts.sourceMap[0].mimetype, 'application/json')
+  t.equal(parts.sourceMap[0].mimetype, 'application/octet-stream')
   try {
     t.ok(JSON.parse(data), 'sourceMap should be valid json')
   } catch (e) {
     end(e)
   }
-  t.equal(parts.minifiedFile[0].mimetype, 'application/javascript')
+  t.equal(parts.minifiedFile[0].mimetype, 'application/octet-stream')
   t.ok(fs.readFileSync(parts.sourceMap[0].filepath).length !== 0, 'js bundle should have size')
 }
 
@@ -197,8 +197,8 @@ if (process.env.WEBPACK_VERSION !== '3') {
 
       const done = () => {
         t.equal(requests[0].minifiedUrl, '*/dist/main.js')
-        t.match(requests[0].parts[0].filename, /main\.js\.map$/)
         t.match(requests[0].parts[1].filename, /main\.js$/)
+        t.match(requests[0].parts[0].filename, /main\.js\.map$/)
         end()
       }
 
@@ -246,11 +246,11 @@ if (process.env.WEBPACK_VERSION !== '3') {
     const done = () => {
       requests.sort((a, b) => a.minifiedUrl < b.minifiedUrl ? -1 : 1)
       t.equal(requests[0].minifiedUrl, '*/dist/main.css')
+      t.match(requests[0].parts[0].filename, /main\.css/)
       t.match(requests[0].parts[0].filename, /main\.css\.map/)
-      t.match(requests[0].parts[1].filename, /main\.css/)
       t.equal(requests[1].minifiedUrl, '*/dist/main.js')
+      t.match(requests[1].parts[0].filename, /main\.js/)
       t.match(requests[1].parts[0].filename, /main\.js\.map/)
-      t.match(requests[1].parts[1].filename, /main\.js/)
       end()
     }
 

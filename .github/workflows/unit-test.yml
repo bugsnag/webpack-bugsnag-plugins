@@ -4,10 +4,10 @@ on: push
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
-        node: [14, 16, 18, 20, 22]
+        node: [18, 20, 22]
         webpack: [3, 4, 5]
     env:
       WEBPACK_VERSION: ${{ matrix.webpack }}
@@ -20,3 +20,4 @@ jobs:
       - run: npm install
       - run: bin/ci-install.sh
       - run: npm test
+

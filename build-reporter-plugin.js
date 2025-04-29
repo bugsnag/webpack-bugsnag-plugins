@@ -1,6 +1,8 @@
 'use strict'
 
-const reportBuild = require('bugsnag-build-reporter')
+const BugsnagCLI = require('@bugsnag/cli')
+
+const LOG_PREFIX = '[BugsnagBuildReporterPlugin]'
 
 class BugsnagBuildReporterPlugin {
   constructor (build, options) {
@@ -12,20 +14,31 @@ class BugsnagBuildReporterPlugin {
     const plugin = (compilation, cb) => {
       const stats = compilation.getStats()
       if (stats.hasErrors()) return cb(null)
-      const options = Object.assign(this.options,
-        !this.options.logger && compiler.getInfrastructureLogger
-          ? { logger: compiler.getInfrastructureLogger('BugsnagBuildReporterPlugin') }
-          : {}
-      )
+      const logger = compiler.getInfrastructureLogger ? compiler.getInfrastructureLogger('BugsnagBuildReporterPlugin') : console
+      const logPrefix = compiler.getInfrastructureLogger ? '' : `${LOG_PREFIX} `
+      const cmdopts = this.getBuildOpts(this)
 
-      reportBuild(this.build, options)
-        .then(() => cb(null))
-        .catch((/* err */) => {
-          // ignore err: a failure to notify Bugsnag shouldn't fail the build
-          // plus the detail will already have been logged to the console
-          cb(null)
+      logger.info(`${logPrefix}creating build for version "${cmdopts.versionName}" using the bugsnag-cli`)
+
+      for (const [key, value] of Object.entries(cmdopts)) {
+        logger.debug(`${logPrefix}${key}: ${value}`)
+      }
+
+      BugsnagCLI.CreateBuild(cmdopts, process.cwd())
+        .then((output) => {
+          // Split output by lines, prefix each line, and log them
+          output.split('\n').forEach((line) => {
+            logger.info(`${logPrefix}${line}`)
+          })
+        })
+        .catch((error) => {
+          // Split error by lines, prefix each line, and log them
+          error.toString().split('\n').forEach((line) => {
+            logger.error(`${logPrefix}${line}`)
+          })
         })
     }
+
     if (compiler.hooks) {
       // webpack v4
       compiler.hooks.afterEmit.tapAsync('BugsnagBuildReporterPlugin', plugin)
@@ -33,6 +46,35 @@ class BugsnagBuildReporterPlugin {
       // webpack v3
       compiler.plugin('after-emit', plugin)
     }
+  }
+
+  getBuildOpts (opts) {
+    // Required options
+    const buildOpts = {
+      apiKey: opts.build.apiKey,
+      versionName: opts.build.appVersion
+    }
+
+    // Optional options
+    const optionalOpts = {
+      autoAssignRelease: opts.build.autoAssignRelease,
+      builderName: opts.build.builderName,
+      metadata: opts.build.metadata,
+      provider: opts.build.provider,
+      releaseStage: opts.build.releaseStage,
+      repository: opts.build.repository,
+      revision: opts.build.revision,
+      buildApiRootUrl: opts.build.endpoint,
+      logLevel: opts.options.logLevel
+    }
+
+    for (const [key, value] of Object.entries(optionalOpts)) {
+      if (value !== undefined) {
+        buildOpts[key] = value
+      }
+    }
+
+    return buildOpts
   }
 }
 

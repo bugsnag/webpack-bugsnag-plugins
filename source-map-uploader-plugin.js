@@ -1,10 +1,10 @@
 'use strict'
 
-const { browser } = require('@bugsnag/source-maps')
 const parallel = require('run-parallel-limit')
 const extname = require('path').extname
 const join = require('path').join
 const webpackVersion = require('webpack').version
+const BugsnagCLI = require('@bugsnag/cli')
 
 const LOG_PREFIX = '[BugsnagSourceMapUploaderPlugin]'
 const PUBLIC_PATH_WARN =
@@ -22,6 +22,8 @@ class BugsnagSourceMapUploaderPlugin {
     this.codeBundleId = options.codeBundleId
     this.overwrite = options.overwrite
     this.endpoint = options.endpoint
+    this.bundle = options.bundle
+    this.bundleUrl = options.bundleUrl
     this.ignoredBundleExtensions = options.ignoredBundleExtensions || ['.css']
     this.validate()
   }
@@ -98,8 +100,24 @@ class BugsnagSourceMapUploaderPlugin {
 
       const sourceMaps = stats.chunks.map(chunkToSourceMapDescriptors).reduce((accum, ds) => accum.concat(ds), [])
       parallel(sourceMaps.map(sm => cb => {
-        logger.info(`${logPrefix}uploading sourcemap for "${sm.url}"`)
-        browser.uploadOne(this.getUploadOpts(sm)).then(cb, cb)
+        const cmdOpts = this.bugsnagCliUploadOpts(sm)
+        logger.info(`${logPrefix}uploading sourcemap for "${sm.url}" using the bugsnag-cli`)
+        for (const [key, value] of Object.entries(cmdOpts)) {
+          logger.debug(`${logPrefix}${key}: ${value}`)
+        }
+        BugsnagCLI.Upload.Js(cmdOpts, outputPath)
+          .then((output) => {
+            // Split output by lines, prefix each line, and log them
+            output.split('\n').forEach((line) => {
+              logger.info(`${logPrefix}${line}`)
+            })
+          })
+          .catch((error) => {
+            // Split error by lines, prefix each line, and log them
+            error.toString().split('\n').forEach((line) => {
+              logger.error(`${logPrefix}${line}`)
+            })
+          })
       }), 10, cb)
     }
 
@@ -117,16 +135,49 @@ class BugsnagSourceMapUploaderPlugin {
       apiKey: this.apiKey,
       appVersion: this.appVersion,
       codeBundleId: this.codeBundleId,
-      bundleUrl: sm.url,
-      bundle: sm.source,
+      bundleUrl: this.bundleUrl || sm.url,
+      bundle: this.bundle || sm.source,
       sourceMap: sm.map
     }
     if (this.endpoint) opts.endpoint = this.endpoint
     if (this.overwrite) opts.overwrite = this.overwrite
     return opts
   }
-}
 
+  bugsnagCliUploadOpts (sm) {
+    const opts = this.getUploadOpts(sm)
+
+    // Validate required fields
+    if (!opts.apiKey) {
+      console.error('Error: API key is required but was not provided.')
+      return null
+    }
+
+    // Command base
+    const cmdOpts = {
+      apiKey: opts.apiKey,
+      projectRoot: process.cwd()
+    }
+
+    // Optional options
+    const optionalParams = {
+      uploadApiRootUrl: opts.endpoint,
+      bundleUrl: opts.bundleUrl,
+      versionName: opts.appVersion,
+      sourceMap: opts.sourceMap,
+      bundle: opts.bundle,
+      codeBundleId: opts.codeBundleId
+    }
+
+    for (const [key, value] of Object.entries(optionalParams)) {
+      if (value !== undefined) {
+        cmdOpts[key] = value
+      }
+    }
+
+    return cmdOpts
+  }
+}
 module.exports = BugsnagSourceMapUploaderPlugin
 
 // removes a querystring from a file path
