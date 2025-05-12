@@ -130,43 +130,31 @@ class BugsnagSourceMapUploaderPlugin {
     }
   }
 
-  getUploadOpts (sm) {
-    const opts = {
-      apiKey: this.apiKey,
-      appVersion: this.appVersion,
-      codeBundleId: this.codeBundleId,
-      bundleUrl: this.bundleUrl || sm.url,
-      bundle: this.bundle || sm.source,
-      sourceMap: sm.map
-    }
-    if (this.endpoint) opts.endpoint = this.endpoint
-    if (this.overwrite) opts.overwrite = this.overwrite
-    return opts
-  }
-
   bugsnagCliUploadOpts (sm) {
-    const opts = this.getUploadOpts(sm)
+    // const opts = this.getUploadOpts(sm)
 
     // Validate required fields
-    if (!opts.apiKey) {
+    if (!this.apiKey) {
       console.error('Error: API key is required but was not provided.')
       return null
     }
 
     // Command base
     const cmdOpts = {
-      apiKey: opts.apiKey,
+      apiKey: this.apiKey,
       projectRoot: process.cwd()
     }
 
     // Optional options
     const optionalParams = {
-      uploadApiRootUrl: opts.endpoint,
-      bundleUrl: opts.bundleUrl,
-      versionName: opts.appVersion,
-      sourceMap: opts.sourceMap,
-      bundle: opts.bundle,
-      codeBundleId: opts.codeBundleId
+      uploadApiRootUrl: this.endpoint,
+      bundleUrl: this.bundleUrl || sm.url,
+      versionName: this.appVersion,
+      sourceMap: sm.map,
+      bundle: this.bundle || sm.source,
+      codeBundleId: this.codeBundleId,
+      endpoint: this.endpoint,
+      overwrite: this.overwrite
     }
 
     for (const [key, value] of Object.entries(optionalParams)) {
