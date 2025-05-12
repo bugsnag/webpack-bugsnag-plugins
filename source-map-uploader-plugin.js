@@ -153,7 +153,6 @@ class BugsnagSourceMapUploaderPlugin {
       sourceMap: sm.map,
       bundle: this.bundle || sm.source,
       codeBundleId: this.codeBundleId,
-      endpoint: this.endpoint,
       overwrite: this.overwrite
     }
 
