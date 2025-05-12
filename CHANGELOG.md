@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.1.0] - 2025-05-12
+
+- Ensure that we pass overwrite and endpoint to the BugSnag CLI (#93)
+
 ## [2.0.0] - 2025-04-28
 
 There are no breaking changes in this release, but it has been marked as a major change due to the significant difference in the underlying tooling. Both source map upload and registering new builds is now done via the `@bugsnag/cli` package.
