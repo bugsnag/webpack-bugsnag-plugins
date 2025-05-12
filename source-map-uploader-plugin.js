@@ -131,8 +131,6 @@ class BugsnagSourceMapUploaderPlugin {
   }
 
   bugsnagCliUploadOpts (sm) {
-    // const opts = this.getUploadOpts(sm)
-
     // Validate required fields
     if (!this.apiKey) {
       console.error('Error: API key is required but was not provided.')
