@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.2.0] - 2025-05-13
+
+- Ensure webpack plugin callback is called when running the source map upload and create build plugins (#95)
+
 ## [2.1.0] - 2025-05-12
 
 - Ensure that we pass overwrite and endpoint to the BugSnag CLI (#93)
