@@ -2,7 +2,7 @@
 
 ## [2.2.0] - 2025-05-13
 
-- Call the callbacks when running the source map upload and create build plugins (#94)
+- Call the callbacks when running the source map upload and create build plugins (#95)
 
 ## [2.1.0] - 2025-05-12
 
