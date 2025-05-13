@@ -11,9 +11,9 @@ class BugsnagBuildReporterPlugin {
   }
 
   apply (compiler) {
-    const plugin = (compilation, cb) => {
+    const plugin = (compilation, callback) => {
       const stats = compilation.getStats()
-      if (stats.hasErrors()) return cb(null)
+      if (stats.hasErrors()) return callback(null)
       const logger = compiler.getInfrastructureLogger ? compiler.getInfrastructureLogger('BugsnagBuildReporterPlugin') : console
       const logPrefix = compiler.getInfrastructureLogger ? '' : `${LOG_PREFIX} `
       const cmdopts = this.getBuildOpts(this)
@@ -30,12 +30,14 @@ class BugsnagBuildReporterPlugin {
           output.split('\n').forEach((line) => {
             logger.info(`${logPrefix}${line}`)
           })
-        })
+          callback()
+        }, callback)
         .catch((error) => {
           // Split error by lines, prefix each line, and log them
           error.toString().split('\n').forEach((line) => {
             logger.error(`${logPrefix}${line}`)
           })
+          callback()
         })
     }
 

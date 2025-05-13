@@ -38,7 +38,7 @@ class BugsnagSourceMapUploaderPlugin {
     // considering this is used to check for a version >= 5, it's fine to default to 0.0.0 in case it's not set
     const webpackMajorVersion = parseInt((webpackVersion || '0.0.0').split('.')[0], 10)
 
-    const plugin = (compilation, cb) => {
+    const plugin = (compilation, callback) => {
       const compiler = compilation.compiler
       const stats = compilation.getStats().toJson()
       const publicPath = this.publicPath || stats.publicPath || ''
@@ -99,7 +99,7 @@ class BugsnagSourceMapUploaderPlugin {
       }
 
       const sourceMaps = stats.chunks.map(chunkToSourceMapDescriptors).reduce((accum, ds) => accum.concat(ds), [])
-      parallel(sourceMaps.map(sm => cb => {
+      parallel(sourceMaps.map(sm => callback => {
         const cmdOpts = this.bugsnagCliUploadOpts(sm)
         logger.info(`${logPrefix}uploading sourcemap for "${sm.url}" using the bugsnag-cli`)
         for (const [key, value] of Object.entries(cmdOpts)) {
@@ -111,14 +111,16 @@ class BugsnagSourceMapUploaderPlugin {
             output.split('\n').forEach((line) => {
               logger.info(`${logPrefix}${line}`)
             })
-          })
+            callback()
+          }, callback)
           .catch((error) => {
             // Split error by lines, prefix each line, and log them
             error.toString().split('\n').forEach((line) => {
               logger.error(`${logPrefix}${line}`)
             })
+            callback()
           })
-      }), 10, cb)
+      }), 10, callback)
     }
 
     if (compiler.hooks) {
