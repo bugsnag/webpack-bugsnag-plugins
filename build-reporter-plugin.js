@@ -17,6 +17,7 @@ class BugsnagBuildReporterPlugin {
       const logger = compiler.getInfrastructureLogger ? compiler.getInfrastructureLogger('BugsnagBuildReporterPlugin') : console
       const logPrefix = compiler.getInfrastructureLogger ? '' : `${LOG_PREFIX} `
       const cmdopts = this.getBuildOpts(this)
+      const path = this.options.path || process.cwd()
 
       logger.info(`${logPrefix}creating build for version "${cmdopts.versionName}" using the bugsnag-cli`)
 
@@ -24,7 +25,7 @@ class BugsnagBuildReporterPlugin {
         logger.debug(`${logPrefix}${key}: ${value}`)
       }
 
-      BugsnagCLI.CreateBuild(cmdopts, process.cwd())
+      BugsnagCLI.CreateBuild(cmdopts, path)
         .then((output) => {
           // Split output by lines, prefix each line, and log them
           output.split('\n').forEach((line) => {
@@ -53,20 +54,20 @@ class BugsnagBuildReporterPlugin {
   getBuildOpts (opts) {
     // Required options
     const buildOpts = {
-      apiKey: opts.build.apiKey,
-      versionName: opts.build.appVersion
+      apiKey: opts.build.apiKey
     }
 
     // Optional options
     const optionalOpts = {
+      versionName: opts.build.appVersion,
       autoAssignRelease: opts.build.autoAssignRelease,
       builderName: opts.build.builderName,
       metadata: opts.build.metadata,
-      provider: opts.build.provider,
       releaseStage: opts.build.releaseStage,
-      repository: opts.build.repository,
-      revision: opts.build.revision,
-      buildApiRootUrl: opts.build.endpoint,
+      provider: opts.build.sourceControl.provider,
+      repository: opts.build.sourceControl.repository,
+      revision: opts.build.sourceControl.revision,
+      buildApiRootUrl: opts.options.endpoint,
       logLevel: opts.options.logLevel
     }
 
