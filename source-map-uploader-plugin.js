@@ -34,7 +34,7 @@ class BugsnagSourceMapUploaderPlugin {
   }
 
   validate () {
-    if (typeof this.options.apiKey !== 'string' || this.options.apiKey.length < 1) {
+    if (typeof this.apiKey !== 'string' || this.apiKey.length < 1) {
       throw new Error(`${LOG_PREFIX} "apiKey" is required`)
     }
   }
@@ -46,7 +46,7 @@ class BugsnagSourceMapUploaderPlugin {
     const plugin = (compilation, callback) => {
       const compiler = compilation.compiler
       const stats = compilation.getStats().toJson()
-      const publicPath = this.options.publicPath || stats.publicPath || ''
+      const publicPath = this.publicPath || stats.publicPath || ''
       const outputPath = compilation.getPath(compiler.outputPath)
       const logger = compiler.getInfrastructureLogger ? compiler.getInfrastructureLogger('BugsnagSourceMapUploaderPlugin') : console
       const logPrefix = compiler.getInfrastructureLogger ? '' : `${LOG_PREFIX} `
@@ -82,7 +82,7 @@ class BugsnagSourceMapUploaderPlugin {
           const outputSourceMapLocation = stripQuery(join(outputPath, map))
 
           // only include this file if its extension is not in the ignore list
-          if (this.options.ignoredBundleExtensions.indexOf(extname(outputChunkLocation)) !== -1) {
+          if (this.ignoredBundleExtensions.indexOf(extname(outputChunkLocation)) !== -1) {
             return null
           }
 
@@ -140,24 +140,24 @@ class BugsnagSourceMapUploaderPlugin {
   bugsnagCliUploadOpts (sm) {
     // Command base
     const cmdOpts = {
-      apiKey: this.options.apiKey,
+      apiKey: this.apiKey,
       projectRoot: process.cwd()
     }
 
     // Optional options
     const optionalParams = {
-      uploadApiRootUrl: this.options.endpoint,
-      bundleUrl: this.options.bundleUrl || sm.url,
-      versionName: this.options.appVersion,
+      uploadApiRootUrl: this.endpoint,
+      bundleUrl: this.bundleUrl || sm.url,
+      versionName: this.appVersion,
       sourceMap: sm.map,
-      bundle: this.options.bundle || sm.source,
-      codeBundleId: this.options.codeBundleId,
-      overwrite: this.options.overwrite,
-      dryRun: this.options.dryRun,
-      logLevel: this.options.logLevel,
-      verbose: this.options.verbose,
-      retries: this.options.retries,
-      timeout: this.options.timeout
+      bundle: this.bundle || sm.source,
+      codeBundleId: this.codeBundleId,
+      overwrite: this.overwrite,
+      dryRun: this.dryRun,
+      logLevel: this.logLevel,
+      verbose: this.verbose,
+      retries: this.retries,
+      timeout: this.timeout
     }
 
     for (const [key, value] of Object.entries(optionalParams)) {
