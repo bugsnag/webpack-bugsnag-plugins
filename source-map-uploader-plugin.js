@@ -16,7 +16,20 @@ const PUBLIC_PATH_WARN =
 
 class BugsnagSourceMapUploaderPlugin {
   constructor (options) {
-    this.options = Object.assign({ logLevel: 'warn', ignoredBundleExtensions: ['.css'] }, options)
+    this.apiKey = options.apiKey
+    this.publicPath = options.publicPath
+    this.appVersion = options.appVersion
+    this.codeBundleId = options.codeBundleId
+    this.overwrite = options.overwrite
+    this.endpoint = options.endpoint
+    this.bundle = options.bundle
+    this.bundleUrl = options.bundleUrl
+    this.ignoredBundleExtensions = options.ignoredBundleExtensions || ['.css']
+    this.dryRun = options.dryRun
+    this.logLevel = options.logLevel
+    this.verbose = options.verbose
+    this.retries = options.retries
+    this.timeout = options.timeout
     this.validate()
   }
 
