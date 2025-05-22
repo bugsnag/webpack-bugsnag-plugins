@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.2.1] - 2025-05-22
+
+- Ensure we expose all options in the Webpack plugin that are available in the Bugsnag CLI (#99)
+- Allow BugsnagBuildReporterPlugin to pass all options in a single object (#99)
+
 ## [2.2.0] - 2025-05-13
 
 - Ensure webpack plugin callback is called when running the source map upload and create build plugins (#95)
