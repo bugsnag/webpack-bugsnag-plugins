@@ -25,6 +25,11 @@ class BugsnagSourceMapUploaderPlugin {
     this.bundle = options.bundle
     this.bundleUrl = options.bundleUrl
     this.ignoredBundleExtensions = options.ignoredBundleExtensions || ['.css']
+    this.dryRun = options.dryRun
+    this.logLevel = options.logLevel
+    this.verbose = options.verbose
+    this.retries = options.retries
+    this.timeout = options.timeout
     this.validate()
   }
 
@@ -153,7 +158,12 @@ class BugsnagSourceMapUploaderPlugin {
       sourceMap: sm.map,
       bundle: this.bundle || sm.source,
       codeBundleId: this.codeBundleId,
-      overwrite: this.overwrite
+      overwrite: this.overwrite,
+      dryRun: this.dryRun,
+      logLevel: this.logLevel,
+      verbose: this.verbose,
+      retries: this.retries,
+      timeout: this.timeout
     }
 
     for (const [key, value] of Object.entries(optionalParams)) {
