@@ -54,8 +54,8 @@ class BugsnagBuildReporterPlugin {
   getBuildOpts (opts) {
     // Required options
     const buildOpts = {
-      apiKey: opts.build.apiKey || opts.options.apiKey,
-      versionName: opts.build.appVersion || opts.options.appVersion
+      apiKey: opts.build.apiKey,
+      versionName: opts.build.appVersion
     }
 
     // Optional options
