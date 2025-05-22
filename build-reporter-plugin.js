@@ -7,7 +7,7 @@ const LOG_PREFIX = '[BugsnagBuildReporterPlugin]'
 class BugsnagBuildReporterPlugin {
   constructor (build, options) {
     this.build = Object.assign({ buildTool: 'webpack-bugsnag-plugins', sourceControl: {}, logLevel: 'warn', path: process.cwd() }, build)
-    this.options = Object.assign({ buildTool: 'webpack-bugsnag-plugins', sourceControl: {}, logLevel: 'warn', path: process.cwd() }, options)
+    this.options = Object.assign({ logLevel: 'warn' }, options)
   }
 
   apply (compiler) {
