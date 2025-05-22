@@ -69,10 +69,10 @@ class BugsnagBuildReporterPlugin {
       releaseStage: opts.build.releaseStage || opts.options.releaseStage,
       buildApiRootUrl: opts.build.endpoint || opts.options.endpoint,
       logLevel: opts.build.logLevel || opts.options.logLevel,
-      dryRun: opts.build.dryRun || opts.options.logLevel,
-      verbose: opts.build.verbose || opts.options.logLevel,
-      retries: opts.build.retries || opts.options.logLevel,
-      timeout: opts.build.timeout || opts.options.logLevel
+      dryRun: opts.build.dryRun || opts.options.dryRun,
+      verbose: opts.build.verbose || opts.options.verbose,
+      retries: opts.build.retries || opts.options.retries,
+      timeout: opts.build.timeout || opts.options.timeout
     }
 
     for (const [key, value] of Object.entries(optionalOpts)) {
