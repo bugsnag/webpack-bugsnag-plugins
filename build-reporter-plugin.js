@@ -7,7 +7,7 @@ const LOG_PREFIX = '[BugsnagBuildReporterPlugin]'
 class BugsnagBuildReporterPlugin {
   constructor (build, options) {
     this.build = Object.assign({ buildTool: 'webpack-bugsnag-plugins', sourceControl: {}, logLevel: 'warn', path: process.cwd() }, build)
-    this.options = Object.assign({ buildTool: 'webpack-bugsnag-plugins', sourceControl: {}, logLevel: 'warn', path: process.cwd() }, options)
+    this.options = Object.assign({ logLevel: 'warn' }, options)
   }
 
   apply (compiler) {
@@ -54,20 +54,20 @@ class BugsnagBuildReporterPlugin {
   getBuildOpts (opts) {
     // Required options
     const buildOpts = {
-      apiKey: opts.build.apiKey || opts.options.apiKey,
-      versionName: opts.build.appVersion || opts.options.appVersion
+      apiKey: opts.build.apiKey,
+      versionName: opts.build.appVersion
     }
 
     // Optional options
     const optionalOpts = {
-      autoAssignRelease: opts.build.autoAssignRelease || opts.options.autoAssignRelease,
-      builderName: opts.build.builderName || opts.options.builderName,
-      metadata: opts.build.metadata || opts.options.metadata,
-      provider: opts.build.sourceControl.provider || opts.options.sourceControl.provider,
-      repository: opts.build.sourceControl.repository || opts.options.sourceControl.repository,
-      revision: opts.build.sourceControl.revision || opts.options.sourceControl.revision,
-      releaseStage: opts.build.releaseStage || opts.options.releaseStage,
-      buildApiRootUrl: opts.build.endpoint || opts.options.endpoint,
+      autoAssignRelease: opts.build.autoAssignRelease,
+      builderName: opts.build.builderName,
+      metadata: opts.build.metadata,
+      provider: opts.build.sourceControl.provider,
+      repository: opts.build.sourceControl.repository,
+      revision: opts.build.sourceControl.revision,
+      releaseStage: opts.build.releaseStage,
+      buildApiRootUrl: opts.build.endpoint,
       logLevel: opts.build.logLevel || opts.options.logLevel,
       dryRun: opts.build.dryRun || opts.options.dryRun,
       verbose: opts.build.verbose || opts.options.verbose,
