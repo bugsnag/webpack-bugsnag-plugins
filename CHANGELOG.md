@@ -1,6 +1,6 @@
 # Changelog
 
-## [2.2.1] - 2025-05-22
+## [2.2.1] - 2025-05-27
 
 - Ensure we expose all options in the Webpack plugin that are available in the Bugsnag CLI (#99)
 - Allow BugsnagBuildReporterPlugin to pass all options in a single object (#99)
