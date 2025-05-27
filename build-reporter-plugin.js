@@ -6,7 +6,7 @@ const LOG_PREFIX = '[BugsnagBuildReporterPlugin]'
 
 class BugsnagBuildReporterPlugin {
   constructor (build, options) {
-    this.build = Object.assign({ buildTool: 'webpack-bugsnag-plugins' }, build)
+    this.build = Object.assign({ buildTool: 'webpack-bugsnag-plugins', sourceControl: {}, logLevel: 'warn', path: process.cwd() }, build)
     this.options = Object.assign({ logLevel: 'warn' }, options)
   }
 
@@ -17,6 +17,7 @@ class BugsnagBuildReporterPlugin {
       const logger = compiler.getInfrastructureLogger ? compiler.getInfrastructureLogger('BugsnagBuildReporterPlugin') : console
       const logPrefix = compiler.getInfrastructureLogger ? '' : `${LOG_PREFIX} `
       const cmdopts = this.getBuildOpts(this)
+      const path = this.options.path || this.build.path
 
       logger.info(`${logPrefix}creating build for version "${cmdopts.versionName}" using the bugsnag-cli`)
 
@@ -24,7 +25,7 @@ class BugsnagBuildReporterPlugin {
         logger.debug(`${logPrefix}${key}: ${value}`)
       }
 
-      BugsnagCLI.CreateBuild(cmdopts, process.cwd())
+      BugsnagCLI.CreateBuild(cmdopts, path)
         .then((output) => {
           // Split output by lines, prefix each line, and log them
           output.split('\n').forEach((line) => {
@@ -62,12 +63,16 @@ class BugsnagBuildReporterPlugin {
       autoAssignRelease: opts.build.autoAssignRelease,
       builderName: opts.build.builderName,
       metadata: opts.build.metadata,
-      provider: opts.build.provider,
+      provider: opts.build.sourceControl.provider,
+      repository: opts.build.sourceControl.repository,
+      revision: opts.build.sourceControl.revision,
       releaseStage: opts.build.releaseStage,
-      repository: opts.build.repository,
-      revision: opts.build.revision,
       buildApiRootUrl: opts.build.endpoint,
-      logLevel: opts.options.logLevel
+      logLevel: opts.build.logLevel || opts.options.logLevel,
+      dryRun: opts.build.dryRun || opts.options.dryRun,
+      verbose: opts.build.verbose || opts.options.verbose,
+      retries: opts.build.retries || opts.options.retries,
+      timeout: opts.build.timeout || opts.options.timeout
     }
 
     for (const [key, value] of Object.entries(optionalOpts)) {
