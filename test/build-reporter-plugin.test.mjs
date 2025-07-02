@@ -21,7 +21,7 @@ test('BugsnagBuildReporterPlugin', t => {
 })
 
 test('it sends upon successful build', t => {
-  t.plan(3)
+  t.plan(4)
   const server = createServer((req, res) => {
     let body = ''
     req.on('data', (d) => { body += d })
@@ -37,6 +37,7 @@ test('it sends upon successful build', t => {
       t.ok(j, 'json body was received')
       t.equal(j.appVersion, '1.2.3', 'body should contain app version')
       t.equal(j.apiKey, 'YOUR_API_KEY', 'body should contain api key')
+      t.same(j.metadata, { foo: 'bar', baz: 'qux' }, 'body should contain correct metadata')
     })
   })
   server.listen()

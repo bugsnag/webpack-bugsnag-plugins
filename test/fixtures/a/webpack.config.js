@@ -10,7 +10,11 @@ module.exports = {
     new BugsnagBuildReporterPlugin({
       apiKey: 'YOUR_API_KEY',
       appVersion: '1.2.3',
-      endpoint: `http://localhost:${process.env.PORT}`
+      endpoint: `http://localhost:${process.env.PORT}`,
+      metadata: {
+        foo: 'bar',
+        baz: 'qux'
+      }
     })
   ]
 }
