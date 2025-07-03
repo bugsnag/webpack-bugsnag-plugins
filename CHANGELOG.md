@@ -1,6 +1,6 @@
 # Changelog
 
-## [2.2.2] - 2025-07-02
+## [2.2.2] - 2025-07-03
 
 - Ensure that we correctly pass the metadata the BugSnag CLI create build command (#100)
 
