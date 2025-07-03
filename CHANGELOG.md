@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.2.2] - 2025-07-03
+
+- Ensure that we correctly pass the metadata the BugSnag CLI create build command (#100)
+
 ## [2.2.1] - 2025-05-27
 
 - Ensure we expose all options in the Webpack plugin that are available in the Bugsnag CLI (#99)

@@ -62,12 +62,14 @@ class BugsnagBuildReporterPlugin {
     const optionalOpts = {
       autoAssignRelease: opts.build.autoAssignRelease,
       builderName: opts.build.builderName,
-      metadata: opts.build.metadata,
+      metadata: Object.entries(opts.build.metadata)
+        .map(([key, value]) => `${key}=${value}`)
+        .join(','),
       provider: opts.build.sourceControl.provider,
       repository: opts.build.sourceControl.repository,
       revision: opts.build.sourceControl.revision,
       releaseStage: opts.build.releaseStage,
-      buildApiRootUrl: opts.build.endpoint,
+      buildApiRootUrl: opts.build.endpoint || opts.options.endpoint,
       logLevel: opts.build.logLevel || opts.options.logLevel,
       dryRun: opts.build.dryRun || opts.options.dryRun,
       verbose: opts.build.verbose || opts.options.verbose,
