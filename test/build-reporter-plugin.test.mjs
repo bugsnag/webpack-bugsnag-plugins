@@ -89,3 +89,44 @@ test('it doesn’t send upon unsuccessful build', t => {
     t.end()
   })
 })
+
+test('it sends upon successful build without metadata', t => {
+  t.plan(3)
+  const server = createServer((req, res) => {
+    let body = ''
+    req.on('data', (d) => { body += d })
+    req.on('end', () => {
+      res.end('ok')
+      let j
+      try {
+        j = JSON.parse(body)
+      } catch (e) {
+        server.close()
+        t.fail('failed to parse body as json')
+      }
+      t.ok(j, 'json body was received')
+      t.equal(j.appVersion, '1.2.3', 'body should contain app version')
+      t.equal(j.apiKey, 'YOUR_API_KEY', 'body should contain api key')
+      // Note: no metadata check since none was provided
+    })
+  })
+  server.listen()
+
+  // Add timeout to prevent hanging
+  const timeout = setTimeout(() => {
+    server.close()
+    t.fail('Test timed out - webpack process may be hanging')
+    t.end()
+  }, 30000) // 30 second timeout
+
+  exec(join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
+    env: generateEnv(server),
+    cwd: join(__dirname, 'fixtures', 'i')
+  }, (err, stdout, stderr) => {
+    clearTimeout(timeout)
+    server.close()
+    if (err) { console.info(err, '\n\n\n', stdout, '\n\n\n', stderr) }
+    if (err) return t.fail(err.message)
+    t.end()
+  })
+})
