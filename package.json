@@ -17,12 +17,14 @@
   "author": "Bugsnag Inc.",
   "license": "MIT",
   "devDependencies": {
-    "concat-stream": "^1.6.2",
-    "once": "^1.4.0",
-    "formidable": "^3.5.1",
-    "standard": "^16.0.1",
     "@randomgoods/tap-spec": "^5.0.4",
-    "tape": "^5.0.1"
+    "concat-stream": "^1.6.2",
+    "formidable": "^3.5.1",
+    "once": "^1.4.0",
+    "standard": "^16.0.1",
+    "tape": "^5.0.1",
+    "webpack": "^5.99.9",
+    "webpack-cli": "^6.0.1"
   },
   "dependencies": {
     "@bugsnag/cli": "^3.0.0",

@@ -41,10 +41,19 @@ test('it sends upon successful build', t => {
     })
   })
   server.listen()
+
+  // Add timeout to prevent hanging
+  const timeout = setTimeout(() => {
+    server.close()
+    t.fail('Test timed out - webpack process may be hanging')
+    t.end()
+  }, 30000) // 30 second timeout
+
   exec(join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
     env: generateEnv(server),
     cwd: join(__dirname, 'fixtures', 'a')
   }, (err, stdout, stderr) => {
+    clearTimeout(timeout)
     server.close()
     if (err) { console.info(err, '\n\n\n', stdout, '\n\n\n', stderr) }
     if (err) return t.fail(err.message)
@@ -62,12 +71,21 @@ test('it doesn’t send upon unsuccessful build', t => {
     })
   })
   server.listen()
+
+  // Add timeout to prevent hanging
+  const timeout = setTimeout(() => {
+    server.close()
+    t.fail('Test timed out - webpack process may be hanging')
+    t.end()
+  }, 30000) // 30 second timeout
+
   exec(join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
     env: generateEnv(server),
     cwd: join(__dirname, 'fixtures', 'b')
   }, (err, stdout, stderr) => {
+    clearTimeout(timeout)
     server.close()
-    t.ok(err)
+    t.ok(err, 'webpack should fail due to syntax error')
     t.end()
   })
 })
