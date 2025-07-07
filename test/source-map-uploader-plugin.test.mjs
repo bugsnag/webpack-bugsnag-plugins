@@ -197,8 +197,8 @@ if (process.env.WEBPACK_VERSION !== '3') {
 
       const done = () => {
         t.equal(requests[0].minifiedUrl, '*/dist/main.js')
-        t.match(requests[0].parts[1].filename, /main\.js$/)
-        t.match(requests[0].parts[0].filename, /main\.js\.map$/)
+        t.match(requests[0].parts.find(p => p.filename.includes('.js') && !p.filename.includes('.map'))?.filename, /main\.js$/)
+        t.match(requests[0].parts.find(p => p.filename.includes('.js.map'))?.filename, /main\.js\.map$/)
         end()
       }
 
