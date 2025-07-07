@@ -19,14 +19,10 @@
   "devDependencies": {
     "@randomgoods/tap-spec": "^5.0.4",
     "concat-stream": "^1.6.2",
-    "css-loader": "^7.1.2",
     "formidable": "^3.5.1",
-    "mini-css-extract-plugin": "^2.9.2",
     "once": "^1.4.0",
     "standard": "^16.0.1",
-    "tape": "^5.0.1",
-    "webpack": "^5.99.9",
-    "webpack-cli": "^6.0.1"
+    "tape": "^5.0.1"
   },
   "dependencies": {
     "@bugsnag/cli": "^3.0.0",
