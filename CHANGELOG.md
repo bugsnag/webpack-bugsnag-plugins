@@ -1,8 +1,10 @@
 # Changelog
 
-## [Unreleased]
+## [2.2.3] - 2025-07-08
 
-- Fixed an issue when build metadata option is not provided (#101)
+### Fixed
+
+- Resolve issue where build metadata option was not properly handled when undefined (#101)
 
 ## [2.2.2] - 2025-07-03
 
