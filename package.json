@@ -17,11 +17,11 @@
   "author": "Bugsnag Inc.",
   "license": "MIT",
   "devDependencies": {
-    "concat-stream": "^1.6.2",
-    "once": "^1.4.0",
-    "formidable": "^3.5.1",
-    "standard": "^16.0.1",
     "@randomgoods/tap-spec": "^5.0.4",
+    "concat-stream": "^1.6.2",
+    "formidable": "^3.5.1",
+    "once": "^1.4.0",
+    "standard": "^16.0.1",
     "tape": "^5.0.1"
   },
   "dependencies": {

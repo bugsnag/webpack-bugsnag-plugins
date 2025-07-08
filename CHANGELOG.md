@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.2.3] - 2025-07-08
+
+### Fixed
+
+- Resolve issue where build metadata option was not properly handled when undefined (#101)
+
 ## [2.2.2] - 2025-07-03
 
 - Ensure that we correctly pass the metadata the BugSnag CLI create build command (#100)
