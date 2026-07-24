@@ -86,7 +86,7 @@ class BugsnagSourceMapUploaderPlugin {
             return null
           }
 
-          let url = '' +
+          const url = '' +
             // ensure publicPath has a trailing slash
             publicPath.replace(/[^/]$/, '$&/') +
             // remove leading / or ./ from source
