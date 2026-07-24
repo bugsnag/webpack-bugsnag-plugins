@@ -92,21 +92,10 @@ class BugsnagSourceMapUploaderPlugin {
             // remove leading / or ./ from source
             source.replace(/^\.?\//, '')
 
-          // Normalize path segments (e.g. "../") to fix CWE-116 path traversal.
-          // Use URL API for absolute URLs, segment resolution for relative paths.
-          try {
-            url = new URL(url).href
-          } catch (e) {
-            const parts = url.split('/')
-            const resolved = []
-            for (const part of parts) {
-              if (part === '..') {
-                resolved.pop()
-              } else {
-                resolved.push(part)
-              }
-            }
-            url = resolved.join('/')
+          // Remove "../" path traversal segments from the URL. Loop ensures
+          // bypass attempts like "....//  " are fully resolved (fixes CWE-116).
+          while (url.includes('../')) {
+            url = url.replace(/\.\.\//g, '')
           }
 
           return {
