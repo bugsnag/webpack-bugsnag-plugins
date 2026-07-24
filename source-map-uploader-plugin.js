@@ -86,11 +86,14 @@ class BugsnagSourceMapUploaderPlugin {
             return null
           }
 
-          const url = '' +
+          let url = '' +
             // ensure publicPath has a trailing slash
             publicPath.replace(/[^/]$/, '$&/') +
             // remove leading / or ./ from source
             source.replace(/^\.?\//, '')
+
+          // Normalize path segments (e.g. "../") using URL API to fix CWE-116
+          url = new URL(url).href
 
           return {
             source: outputChunkLocation,
