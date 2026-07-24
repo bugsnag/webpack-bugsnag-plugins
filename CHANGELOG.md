@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unrelease]
+
+### Fixed
+
+- SAST fix-Remove bypassable url.replace(/../) sanitization — url is passed to @bugsnag/cli, not used in any injection-sensitive context (#103)
+
 ## [2.2.3] - 2025-07-08
 
 ### Fixed
