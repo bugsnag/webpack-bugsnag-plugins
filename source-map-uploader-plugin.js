@@ -92,9 +92,6 @@ class BugsnagSourceMapUploaderPlugin {
             // remove leading / or ./ from source
             source.replace(/^\.?\//, '')
 
-          // replace parent directory references with empty string
-          url = url.replace(/\.\.\//g, '')
-
           return {
             source: outputChunkLocation,
             map: outputSourceMapLocation,
