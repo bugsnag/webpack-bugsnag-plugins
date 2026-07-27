@@ -92,8 +92,11 @@ class BugsnagSourceMapUploaderPlugin {
             // remove leading / or ./ from source
             source.replace(/^\.?\//, '')
 
-          // replace parent directory references with empty string
-          url = url.replace(/\.\.\//g, '')
+          // Remove "../" path traversal segments from the URL. Loop ensures
+          // bypass attempts like "....//  " are fully resolved (fixes CWE-116).
+          while (url.includes('../')) {
+            url = url.replace(/\.\.\//g, '')
+          }
 
           return {
             source: outputChunkLocation,
