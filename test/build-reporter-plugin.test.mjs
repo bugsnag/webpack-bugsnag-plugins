@@ -1,7 +1,7 @@
 import test from 'tape'
 import Plugin from '../build-reporter-plugin.js'
 import { createServer } from 'http'
-import { exec } from 'child_process'
+import { execFile } from 'child_process'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 
@@ -11,6 +11,15 @@ const generateEnv = (server) => {
   // The openssl-legacy-provider is required for webpack4 in node 18 and up - see https://github.com/webpack/webpack/issues/14532
   const nodeOptions = (parseInt(process.versions.node.split('.')[0]) >= 18) ? { NODE_OPTIONS: '--openssl-legacy-provider' } : {}
   return Object.assign({}, process.env, { PORT: server.address().port }, nodeOptions)
+}
+
+const runWebpack = (cwd, env, callback) => {
+  execFile(
+    join(__dirname, '..', 'node_modules', '.bin', 'webpack'),
+    [],
+    { env, cwd },
+    callback
+  )
 }
 
 test('BugsnagBuildReporterPlugin', t => {
@@ -47,21 +56,22 @@ test('it sends upon successful build', t => {
     server.close()
     t.fail('Test timed out - webpack process may be hanging')
     t.end()
-  }, 30000) // 30 second timeout
+  }, 30000)
 
-  exec(join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
-    env: generateEnv(server),
-    cwd: join(__dirname, 'fixtures', 'a')
-  }, (err, stdout, stderr) => {
-    clearTimeout(timeout)
-    server.close()
-    if (err) { console.info(err, '\n\n\n', stdout, '\n\n\n', stderr) }
-    if (err) return t.fail(err.message)
-    t.end()
-  })
+  runWebpack(
+    join(__dirname, 'fixtures', 'a'),
+    generateEnv(server),
+    (err, stdout, stderr) => {
+      clearTimeout(timeout)
+      server.close()
+      if (err) { console.info(err, '\n\n\n', stdout, '\n\n\n', stderr) }
+      if (err) return t.fail(err.message)
+      t.end()
+    }
+  )
 })
 
-test('it doesn’t send upon unsuccessful build', t => {
+test('it doesn\'t send upon unsuccessful build', t => {
   t.plan(1)
   const server = createServer((req, res) => {
     req.on('data', (d) => {})
@@ -77,17 +87,18 @@ test('it doesn’t send upon unsuccessful build', t => {
     server.close()
     t.fail('Test timed out - webpack process may be hanging')
     t.end()
-  }, 30000) // 30 second timeout
+  }, 30000)
 
-  exec(join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
-    env: generateEnv(server),
-    cwd: join(__dirname, 'fixtures', 'b')
-  }, (err, stdout, stderr) => {
-    clearTimeout(timeout)
-    server.close()
-    t.ok(err, 'webpack should fail due to syntax error')
-    t.end()
-  })
+  runWebpack(
+    join(__dirname, 'fixtures', 'b'),
+    generateEnv(server),
+    (err, stdout, stderr) => {
+      clearTimeout(timeout)
+      server.close()
+      t.ok(err, 'webpack should fail due to syntax error')
+      t.end()
+    }
+  )
 })
 
 test('it sends upon successful build without metadata', t => {
@@ -119,14 +130,15 @@ test('it sends upon successful build without metadata', t => {
     t.end()
   }, 30000) // 30 second timeout
 
-  exec(join(__dirname, '..', 'node_modules', '.bin', 'webpack'), {
-    env: generateEnv(server),
-    cwd: join(__dirname, 'fixtures', 'i')
-  }, (err, stdout, stderr) => {
-    clearTimeout(timeout)
-    server.close()
-    if (err) { console.info(err, '\n\n\n', stdout, '\n\n\n', stderr) }
-    if (err) return t.fail(err.message)
-    t.end()
-  })
+  runWebpack(
+    join(__dirname, 'fixtures', 'i'),
+    generateEnv(server),
+    (err, stdout, stderr) => {
+      clearTimeout(timeout)
+      server.close()
+      if (err) { console.info(err, '\n\n\n', stdout, '\n\n\n', stderr) }
+      if (err) return t.fail(err.message)
+      t.end()
+    }
+  )
 })
